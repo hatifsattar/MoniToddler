@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
     public static Firebase ref;
 
     public final String TABLE_1 = "listCheck";
-    //public final String TABLE_2 = "Hon";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

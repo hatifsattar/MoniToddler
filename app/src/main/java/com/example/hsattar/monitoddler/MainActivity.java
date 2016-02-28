@@ -34,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-// Use Firebase to populate the list.
+
+        // Use Firebase to populate the list.
         Firebase.setAndroidContext(this);
         ref = new Firebase(MainActivity.FIREBASE_URL);
 
@@ -47,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Assign adapter to ListView
         listView.setAdapter(adapter);
-
 
         new Firebase(FIREBASE_URL + TABLE_1)
                 .addChildEventListener(new ChildEventListener() {

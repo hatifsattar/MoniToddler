@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void update_activity() {
-        Intent myIntent = new Intent(this, UploadVitals.class);
+        Intent myIntent = new Intent(this, SensorTagActivity.class);
         startActivity(myIntent);
     }
 

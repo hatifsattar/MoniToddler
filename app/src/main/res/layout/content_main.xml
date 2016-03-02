@@ -11,27 +11,28 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.hsattar.monitoddler.MainActivity"
-    tools:showIn="@layout/activity_main">
+    tools:showIn="@layout/activity_main"
+    android:gravity="center">
 
-    <ListView
-        android:id="@+id/listView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:transcriptMode="alwaysScroll"
-        android:stackFromBottom="true">
-    </ListView>
+    <!--<ListView-->
+        <!--android:id="@+id/listView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_weight="1"-->
+        <!--android:transcriptMode="alwaysScroll"-->
+        <!--android:stackFromBottom="true">-->
+    <!--</ListView>-->
 
-    <EditText
-        android:id="@+id/someText"
-        android:hint="Enter some text"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+    <!--<EditText-->
+        <!--android:id="@+id/someText"-->
+        <!--android:hint="Enter some text"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content" />-->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_gravity="bottom"
         android:layout_marginBottom="5dp">
         <Button
@@ -39,20 +40,23 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Add New" />
+            android:layout_margin="10dp"
+            android:text="Add New Patient" />
 
         <Button
             android:id="@+id/viewPatient"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="View" />
+            android:layout_margin="10dp"
+            android:text="View Patient" />
 
         <Button
             android:id="@+id/updateButton"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Update" />
+            android:layout_margin="10dp"
+            android:text="Transmit" />
     </LinearLayout>
 </LinearLayout>

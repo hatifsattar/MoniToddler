@@ -40,49 +40,49 @@ public class MainActivity extends AppCompatActivity {
         ref = new Firebase(MainActivity.FIREBASE_URL);
 
         // Get ListView object from xml
-        final ListView listView = (ListView) findViewById(R.id.listView);
+//        final ListView listView = (ListView) findViewById(R.id.listView);
+//
+//        // Create a new Adapter
+//        final ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+//                android.R.layout.simple_list_item_1, android.R.id.text1);
+//
+//        // Assign adapter to ListView
+//        listView.setAdapter(adapter);
 
-        // Create a new Adapter
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1);
-
-        // Assign adapter to ListView
-        listView.setAdapter(adapter);
-
-        new Firebase(FIREBASE_URL + TABLE_1)
-                .addChildEventListener(new ChildEventListener() {
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        adapter.add((String) dataSnapshot.child("text").getValue());
-                    }
-
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-                        adapter.remove((String) dataSnapshot.child("text").getValue());
-                    }
-
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                    }
-
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                    }
-
-                    public void onCancelled(FirebaseError firebaseError) {
-                    }
-                });
+//        new Firebase(FIREBASE_URL + TABLE_1)
+//                .addChildEventListener(new ChildEventListener() {
+//                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                        adapter.add((String) dataSnapshot.child("text").getValue());
+//                    }
+//
+//                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+//                        adapter.remove((String) dataSnapshot.child("text").getValue());
+//                    }
+//
+//                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//                    }
+//
+//                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//                    }
+//
+//                    public void onCancelled(FirebaseError firebaseError) {
+//                    }
+//                });
 
         // Add items via the Button and EditText at the bottom of the window.
-        final EditText text = (EditText) findViewById(R.id.someText);
-        final Button button_add = (Button) findViewById(R.id.addButton);
+//        final EditText text = (EditText) findViewById(R.id.someText);
+//        final Button button_add = (Button) findViewById(R.id.addButton);
         final Button btn_view = (Button) findViewById(R.id.viewPatient);
         final Button btn_update = (Button) findViewById(R.id.updateButton);
-        button_add.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                new Firebase(FIREBASE_URL + TABLE_1)
-                        .push()
-                        .child("text")
-                        .setValue(text.getText().toString());
-                text.setText("");
-            }
-        });
+//        button_add.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                new Firebase(FIREBASE_URL + TABLE_1)
+//                        .push()
+//                        .child("text")
+//                        .setValue(text.getText().toString());
+//                text.setText("");
+//            }
+//        });
 
         btn_view.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -96,28 +96,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        listView.setLongClickable(true);
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-                                           final int arg2, long arg3) {
-                new Firebase(FIREBASE_URL + TABLE_1)
-                        .orderByChild("text")
-                        .equalTo((String) listView.getItemAtPosition(arg2))
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.hasChildren()) {
-                                    DataSnapshot firstChild = dataSnapshot.getChildren().iterator().next();
-                                    firstChild.getRef().removeValue();
-                                }
-                            }
-
-                            public void onCancelled(FirebaseError firebaseError) {
-                            }
-                        });
-                return true;
-            }
-        });
+//        listView.setLongClickable(true);
+//        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+//                                           final int arg2, long arg3) {
+//                new Firebase(FIREBASE_URL + TABLE_1)
+//                        .orderByChild("text")
+//                        .equalTo((String) listView.getItemAtPosition(arg2))
+//                        .addListenerForSingleValueEvent(new ValueEventListener() {
+//                            public void onDataChange(DataSnapshot dataSnapshot) {
+//                                if (dataSnapshot.hasChildren()) {
+//                                    DataSnapshot firstChild = dataSnapshot.getChildren().iterator().next();
+//                                    firstChild.getRef().removeValue();
+//                                }
+//                            }
+//
+//                            public void onCancelled(FirebaseError firebaseError) {
+//                            }
+//                        });
+//                return true;
+//            }
+//        });
     }
 
     private void update_activity() {

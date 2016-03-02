@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:text="New Text"
         android:id="@+id/Name"
-        android:textSize="35dp"
+        android:textSize="30dp"
         android:textStyle="bold"
         android:layout_marginBottom="15dp"
         android:layout_alignParentTop="true"
@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Heart Rate"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:id="@+id/textView2"
         android:layout_marginBottom="5dp"
         android:layout_below="@+id/Name"
@@ -38,7 +38,7 @@
         android:text="-"
         android:id="@+id/heartrate"
         android:textStyle="bold"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:layout_below="@+id/Name"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:text="Temperature (*C)"
         android:id="@+id/tv"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:layout_below="@+id/textView2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -60,7 +60,7 @@
         android:id="@+id/temp"
         android:layout_marginBottom="5dp"
         android:textStyle="bold"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:layout_alignTop="@+id/tv"
         android:layout_alignRight="@+id/heartrate"
         android:layout_alignEnd="@+id/heartrate" />
@@ -70,7 +70,7 @@
         android:layout_height="wrap_content"
         android:text="Patient Critical"
         android:id="@+id/tv2"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:layout_below="@+id/temp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -81,7 +81,7 @@
         android:text="-"
         android:id="@+id/critical"
         android:textStyle="bold"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:layout_below="@+id/temp"
         android:layout_alignRight="@+id/temp"
         android:layout_alignEnd="@+id/temp" />

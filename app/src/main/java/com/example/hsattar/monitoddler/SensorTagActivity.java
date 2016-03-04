@@ -20,10 +20,24 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 
 public class SensorTagActivity extends AppCompatActivity {
 
     private BluetoothAdapter mBtAdapter = null;
+    private Menu menu;
+
+    //logging
+    private File logFile;
+    public static FileOutputStream fOut;
+    private String fileName = "/sdcard/MonitoddlerLog.txt";
+    public static boolean isLogging = false;
+    public static OutputStreamWriter LogWriter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +64,8 @@ public class SensorTagActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_update, menu);
+        this.menu = menu;
         return true;
     }
 
@@ -62,10 +77,43 @@ public class SensorTagActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_update_settings) {
+            MenuItem settingsTitle = menu.findItem(R.id.action_update_settings);
+            if (!isLogging) {
+                isLogging = true;
+                message("logging begins!");
+                settingsTitle.setTitle("Stop Logging");
+                try {
+                    logFile = new File(fileName);
+                    logFile.createNewFile();
+                    fOut = new FileOutputStream(logFile);
+                    LogWriter = new OutputStreamWriter(fOut);
+                }catch (Exception e) {
+                    message("Could not open file!");
+                }
+
+            }
+            else
+            {
+                isLogging = false;
+                message("logging ends!");
+                //gets closed onPause in fragment too
+                try {
+                    LogWriter.close();
+                    fOut.close();
+                }catch (Exception e) {
+                    message("Could not close file!");
+                }
+
+                settingsTitle.setTitle("Start Logging");
+            }
+
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void message(String msg) {
+        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
     }
 }

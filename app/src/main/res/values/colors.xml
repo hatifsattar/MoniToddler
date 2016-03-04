@@ -6,6 +6,7 @@
     <color name="colorRed">#f2181b</color>
     <color name="colorGreen">#04ea00</color>
     <color name="colorMainButtonText">#ffffff</color>
+    <color name="colorViewText">#ffffff</color>
     <color name="colorMainButton">#00b0ea</color>
     <color name="colorMainButtonBorder">#32889b</color>
     <color name="colorMainBackground">#0c1818</color>

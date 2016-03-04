@@ -4,15 +4,21 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.Firebase;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 
 // This AsyncTask is for data coming from sensortag
 public class AsyncData extends AsyncTask<String, Void, String> {
     public Context context;
     private View rootView;
     private byte[] byteArray;
-    private float[] accFloatArray;
+    private static float[] accFloatArray = {0,0,0};
+    private float deltaPercent = 0;
 
     public AsyncData(Context context, View rootView, byte[] byteArray) {
         this.context = context;
@@ -33,8 +39,23 @@ public class AsyncData extends AsyncTask<String, Void, String> {
         TextView accZ = (TextView) rootView.findViewById(R.id.accZ);
         accX.setText("X: " + accFloatArray[0]);
         accY.setText("Y: " + accFloatArray[1]);
-        accZ.setText("Z: " + accFloatArray[2]);
+        accZ.setText("deltaX: " + deltaPercent);
 
+        if (SensorTagActivity.isLogging){
+            SensorTagActivityFragment.loggingText += "\n" + " X: " + accFloatArray[0] + " Y: "
+                    + accFloatArray[1] + " deltaX: " + deltaPercent;
+
+            if (SensorTagActivityFragment.loggingText.length() > 100){
+                //add to file
+                try {
+                    SensorTagActivity.LogWriter.append(SensorTagActivityFragment.loggingText);
+                }catch (Exception e) {
+                    SensorTagActivityFragment.loggingText = "";
+                }
+                //clean up logging string
+                SensorTagActivityFragment.loggingText = "";
+            }
+        }
         Firebase fb = MainActivity.ref.child("MT").child("patientX");
 
         fb.child("HR").setValue(accFloatArray[0]);
@@ -55,6 +76,9 @@ public class AsyncData extends AsyncTask<String, Void, String> {
         accVals[0] = convertTwoBytesToInt1 (value[6], value[7]) / (32768/4);
         accVals[1] = convertTwoBytesToInt1 (value[8], value[9]) / (32768/4);
         accVals[2] = convertTwoBytesToInt1 (value[10], value[11]) / (32768/4);
+
+        //x axis only
+        deltaPercent = (accVals[0] - accFloatArray[0])/accFloatArray[0];
 
         return accVals;
     }

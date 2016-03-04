@@ -22,7 +22,6 @@ public class AsyncText extends AsyncTask<String, Void, String> {
         String newText = new String(params[0]);
         String currentText = new String(params[1]);
         currentText += "\n" + newText;
-        int length = SensorTagActivityFragment.currentText.length();
         if (SensorTagActivityFragment.currentText.length() > 5000) {
             SensorTagActivityFragment.currentText = "";
         }

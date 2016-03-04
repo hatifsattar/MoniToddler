@@ -56,6 +56,7 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
 
     public String DeviceName="SensorTag";
     public static String currentText = "";
+    public static String loggingText = "";
     public BluetoothAdapter BTAdapter;
     public BluetoothDevice BTDevice;
     public BluetoothGatt BTGatt;
@@ -79,7 +80,7 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
 
         ((Button)rootView.findViewById(R.id.scanbutton)).setOnClickListener(this);
         ((Button)rootView.findViewById(R.id.clearbutton)).setOnClickListener(this);
-        output("Hello SensorTag!");
+        output("Turn on the Sensortag");
 
         BluetoothManager BTManager=(BluetoothManager) getContext().getSystemService(Context.BLUETOOTH_SERVICE);
         BTAdapter=BTManager.getAdapter();
@@ -105,6 +106,16 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
 
     @Override
     public void onPause() {
+        if (SensorTagActivity.isLogging == true){
+            SensorTagActivity.isLogging = false;
+            try {
+                SensorTagActivity.LogWriter.close();
+                SensorTagActivity.fOut.close();
+            }catch (Exception e) {
+                message("Could not close file!");
+            }
+            message("logging ends!");
+        }
         super.onPause();
         BTDevice=null;
         if (BTGatt != null)

@@ -1,6 +1,11 @@
 package com.example.hsattar.monitoddler;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.graphics.Color;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -94,6 +99,7 @@ public class ViewPatient extends AppCompatActivity {
                 Critical.setText(value);
                 if (value.equals("Yes")) {
                     Critical.setTextColor(Color.parseColor("#f2181b"));
+                    //SendNotification(patient_name);
                 } else {
                     Critical.setTextColor(Color.parseColor("#04ea00"));
                 }
@@ -104,5 +110,36 @@ public class ViewPatient extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void SendNotification(String patient) {
+        String title = "Monitoddler - Emergency!";
+        String msg = "Emergency! Patient " + patient + " is Critical";
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.monitoddler_icon)
+                        .setContentTitle(title)
+                        .setContentText(msg);
+
+        mBuilder.setDefaults(Notification.DEFAULT_SOUND);
+        mBuilder.setVibrate(new long[] { 1000, 1000, 1000});
+
+        Intent resultIntent = new Intent(this,NotificationClass.class);
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        resultIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        // Sets an ID for the notification
+        int mNotificationId = 001;
+        // Gets an instance of the NotificationManager service
+        NotificationManager mNotifyMgr =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        // Builds the notification and issues it.
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
 }

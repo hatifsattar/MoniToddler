@@ -30,7 +30,8 @@
         <activity android:name=".ViewPatient" />
         <activity android:name=".UploadVitals" />
         <activity android:name=".SensorTagActivity" />
-        <activity android:name=".AddPatient"></activity>
+        <activity android:name=".AddPatient" />
+        <activity android:name=".NotificationClass"></activity>
     </application>
 
 </manifest>

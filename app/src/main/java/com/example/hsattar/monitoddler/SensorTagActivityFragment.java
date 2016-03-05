@@ -62,7 +62,7 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
     public BluetoothDevice BTDevice;
     public BluetoothDevice BTDeviceHR;
     public BluetoothGatt BTGatt;
-    private boolean showedConnectedMsg[] = {false,false}; //sensortag,wahoo
+    private boolean showedConnectedMsg[] = {false,false}; //sensortag,wahoo tickr
     List<BluetoothGattService> serviceList;
     List <BluetoothGattCharacteristic> charList = new ArrayList<BluetoothGattCharacteristic>();
 

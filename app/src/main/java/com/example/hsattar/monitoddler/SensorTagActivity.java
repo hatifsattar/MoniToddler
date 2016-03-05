@@ -25,6 +25,8 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class SensorTagActivity extends AppCompatActivity {
 
@@ -34,7 +36,7 @@ public class SensorTagActivity extends AppCompatActivity {
     //logging
     private File logFile;
     public static FileOutputStream fOut;
-    private String fileName = "/sdcard/MonitoddlerLog.txt";
+    private String fileDir = "/sdcard/Monitoddler";
     public static boolean isLogging = false;
     public static OutputStreamWriter LogWriter;
 
@@ -80,14 +82,18 @@ public class SensorTagActivity extends AppCompatActivity {
         if (id == R.id.action_update_settings) {
             MenuItem settingsTitle = menu.findItem(R.id.action_update_settings);
             if (!isLogging) {
-                isLogging = true;
-                message("logging begins!");
-                settingsTitle.setTitle("Stop Logging");
                 try {
-                    logFile = new File(fileName);
-                    logFile.createNewFile();
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+                    Date now = new Date();
+                    File dir = new File(fileDir);
+                    dir.mkdirs();
+                    logFile = new File(dir, "Log_"+formatter.format(now)+".txt");
+                    //logFile.createNewFile();
                     fOut = new FileOutputStream(logFile);
                     LogWriter = new OutputStreamWriter(fOut);
+                    isLogging = true;
+                    message("logging begins!");
+                    settingsTitle.setTitle("Stop Logging");
                 }catch (Exception e) {
                     message("Could not open file!");
                 }
@@ -95,12 +101,12 @@ public class SensorTagActivity extends AppCompatActivity {
             }
             else
             {
-                isLogging = false;
-                message("logging ends!");
                 //gets closed onPause in fragment too
                 try {
                     LogWriter.close();
                     fOut.close();
+                    isLogging = false;
+                    message("logging ends!");
                 }catch (Exception e) {
                     message("Could not close file!");
                 }

@@ -55,11 +55,14 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
     public UUID CLIENT_CONFIG_DESCRIPTOR= UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
 
     public String DeviceName="SensorTag";
+    public String DeviceNameHR="TICKR";
     public static String currentText = "";
     public static String loggingText = "";
     public BluetoothAdapter BTAdapter;
     public BluetoothDevice BTDevice;
+    public BluetoothDevice BTDeviceHR;
     public BluetoothGatt BTGatt;
+    private boolean showedConnectedMsg[] = {false,false}; //sensortag,wahoo
     List<BluetoothGattService> serviceList;
     List <BluetoothGattCharacteristic> charList = new ArrayList<BluetoothGattCharacteristic>();
 
@@ -81,7 +84,7 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
         ((Button)rootView.findViewById(R.id.scanbutton)).setOnClickListener(this);
         ((Button)rootView.findViewById(R.id.clearbutton)).setOnClickListener(this);
         clear();
-        output("Turn on the Sensortag");
+        output("Turn on Bluetooth Device(s) and press Scan");
 
         BluetoothManager BTManager=(BluetoothManager) getContext().getSystemService(Context.BLUETOOTH_SERVICE);
         BTAdapter=BTManager.getAdapter();
@@ -153,6 +156,9 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
             }, 5000);
 
             scanning=true;
+            //enable one msg per scan if device connected already
+            showedConnectedMsg[0] = false;
+            showedConnectedMsg[1] = false;
             BTDevice=null;
             if (BTGatt != null)
             {
@@ -178,17 +184,38 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
                 //output("No BT device found");
                 return;
             }
+
+            // sensortag
             if (device.getName().contains(DeviceName))
             {
-                if (BTDevice == null)
-                {
+                if (BTDevice == null) {
                     BTDevice=device;
                     BTGatt=BTDevice.connectGatt(getContext(),false,GattCallback);
                 }
-                else
-                {
-                    if (BTDevice.getAddress().equals(device.getAddress()))
-                    {
+                else {
+                    if (BTDevice.getAddress().equals(device.getAddress())) {
+                        if (!showedConnectedMsg[0]) {
+                            output("Sensortag already connected!");
+                            showedConnectedMsg[0] = true;
+                        }
+                        return;
+                    }
+                }
+                output(device.getName() + ":" + device.getAddress() + ", rssi:" + rssi);
+            }
+            // wahoo tickr
+            else if (device.getName().contains(DeviceNameHR))
+            {
+                if (BTDeviceHR == null) {
+                    BTDeviceHR=device;
+                    BTGatt=BTDeviceHR.connectGatt(getContext(),false,GattCallback);
+                }
+                else {
+                    if (BTDeviceHR.getAddress().equals(device.getAddress())) {
+                        if (!showedConnectedMsg[1]) {
+                            output("Wahoo Tickr already connected!");
+                            showedConnectedMsg[1] = true;
+                        }
                         return;
                     }
                 }
@@ -222,31 +249,34 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
                     }
 
                     output("Total characteristics " + charList.size());
-                    //break;
 
-                    //characteristic write for motion sensors
-                    // bit 0-2 for gyro, 3-5 for acc, 6 for magneto
-                    // 7 for wake on motion, 8-9 acc range (0=2G, 1=4G, 2=8G, 3=16G)
-                    characteristic = gatt.getService(UUID_ACC_SERV).getCharacteristic(UUID_ACC_CONF);
-                    //acc only is 111000 bin = 38 hex = 56 dec
-                    characteristic.setValue("56".getBytes());//new byte[] {1,1,1,1,1,1});
-                    if (gatt.writeCharacteristic(characteristic) == false)
-                    {
-                        output("Could not enable ACC");
+                    //for sensortag
+                    if (gatt.getDevice().getName().contains(DeviceName)) {
+                        //characteristic write for motion sensors
+                        // bit 0-2 for gyro, 3-5 for acc, 6 for magneto
+                        // 7 for wake on motion, 8-9 acc range (0=2G, 1=4G, 2=8G, 3=16G)
+                        characteristic = gatt.getService(UUID_ACC_SERV).getCharacteristic(UUID_ACC_CONF);
+                        //acc only is 111000 bin = 38 hex = 56 dec
+                        characteristic.setValue("56".getBytes());
+                        if (gatt.writeCharacteristic(characteristic) == false) {
+                            output("Could not enable ACC");
+                        }
                     }
                     break;
 
                 case 1: //descriptor write
-                    // Enable local notifications
-                    characteristic = gatt.getService(UUID_ACC_SERV).getCharacteristic(UUID_ACC_DATA);
-                    if (gatt.setCharacteristicNotification(characteristic, true) == false)
-                    {
-                        output("Could not set ACC notification");
+                    //for sensortag
+                    if (gatt.getDevice().getName().contains(DeviceName)) {
+                        // Enable local notifications
+                        characteristic = gatt.getService(UUID_ACC_SERV).getCharacteristic(UUID_ACC_DATA);
+                        if (gatt.setCharacteristicNotification(characteristic, true) == false) {
+                            output("Could not set ACC notification");
+                        }
+                        //Enable remote notifications
+                        descriptor = characteristic.getDescriptor(CLIENT_CONFIG_DESCRIPTOR);
+                        descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                        gatt.writeDescriptor(descriptor);
                     }
-                    //Enable remote notifications
-                    descriptor = characteristic.getDescriptor(CLIENT_CONFIG_DESCRIPTOR);
-                    descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                    gatt.writeDescriptor(descriptor);
                     break;
             }
             //increase the step

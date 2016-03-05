@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         // Add items via the Button and EditText at the bottom of the window.
         final Button btn_view = (Button) findViewById(R.id.viewPatient);
         final Button btn_update = (Button) findViewById(R.id.updateButton);
+        final Button btn_add = (Button) findViewById(R.id.addButton);
 
         btn_view.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -70,6 +71,11 @@ public class MainActivity extends AppCompatActivity {
                 update_activity();
             }
         });
+        btn_add.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                add_patient();
+            }
+        });
     }
 
     private void update_activity() {
@@ -79,6 +85,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void view_activity() {
         Intent myIntent = new Intent(this, ViewPatient.class);
+        startActivity(myIntent);
+    }
+
+    private void add_patient(){
+        Intent myIntent = new Intent(this, AddPatient.class);
         startActivity(myIntent);
     }
 

@@ -75,9 +75,9 @@ public class AsyncData extends AsyncTask<String, Void, String> {
 
         MainActivity.counter++;
 
-        if (MainActivity.counter == 50) {
+        if (MainActivity.counter == 50) {//20
             MainActivity.counter = 0;
-            float delta = cumDelta*20;
+            float delta = cumDelta*20;//8
             if (delta < 2) { // Crude detection
                 fb.child("CRITICAL").setValue("Yes");
                 //fb.child("DELTA").setValue(delta);

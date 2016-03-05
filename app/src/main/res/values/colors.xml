@@ -10,5 +10,6 @@
     <color name="colorMainButton">#00b0ea</color>
     <color name="colorMainButtonBorder">#32889b</color>
     <color name="colorMainBackground">#0c1818</color>
+    <color name="colorAddBackground">#e3ffff</color>
 
 </resources>

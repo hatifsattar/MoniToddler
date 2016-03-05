@@ -165,7 +165,7 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
             if (started) {
                 output("Start scanning");
             } else {
-                output("There was a problem scanning...");
+                output("Enabling Bluetooth...");
             }
         }
     }

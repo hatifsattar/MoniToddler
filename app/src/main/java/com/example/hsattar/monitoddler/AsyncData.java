@@ -17,8 +17,15 @@ public class AsyncData extends AsyncTask<String, Void, String> {
     public Context context;
     private View rootView;
     private byte[] byteArray;
-    private static float[] accFloatArray = {0,0,0};
+    private static float[] accFloatArray = {0,0,0}; // Current Reading
+    private static float[] prevAccFloatArray = {0,0,0}; //Previous reading
     private float deltaPercent = 0;
+    private float cumDelta = 0;
+
+    // Low Pass Filter
+    private static double alpha = 0.5;
+
+
 
     public AsyncData(Context context, View rootView, byte[] byteArray) {
         this.context = context;
@@ -29,6 +36,7 @@ public class AsyncData extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... params) {
         accFloatArray = convertAcc(byteArray);
+        prevAccFloatArray = accFloatArray;
         return "done";
     }
 
@@ -41,9 +49,11 @@ public class AsyncData extends AsyncTask<String, Void, String> {
         accY.setText("Y: " + accFloatArray[1]);
         accZ.setText("deltaX: " + deltaPercent);
 
+
         if (SensorTagActivity.isLogging){
             SensorTagActivityFragment.loggingText += "\n" + " X: " + accFloatArray[0] + " Y: "
                     + accFloatArray[1] + " deltaX: " + deltaPercent;
+
 
             if (SensorTagActivityFragment.loggingText.length() > 100){
                 //add to file
@@ -58,8 +68,24 @@ public class AsyncData extends AsyncTask<String, Void, String> {
         }
         Firebase fb = MainActivity.ref.child("MT").child("patientX");
 
-        fb.child("HR").setValue(accFloatArray[0]);
-        fb.child("TEMP").setValue(accFloatArray[1]);
+        fb.child("HR").setValue(String.format("%.5f",accFloatArray[0]));
+        fb.child("TEMP").setValue(String.format("%.5f",accFloatArray[1]));
+        fb.child("Z-AXIS").setValue(String.format("%.5f",accFloatArray[2]));
+
+
+        MainActivity.counter++;
+
+        if (MainActivity.counter == 50) {
+            MainActivity.counter = 0;
+            float delta = cumDelta*20;
+            if (delta < 2) { // Crude detection
+                fb.child("CRITICAL").setValue("Yes");
+                //fb.child("DELTA").setValue(delta);
+            } else {
+                fb.child("CRITICAL").setValue("No");
+            }
+            fb.child("DELTA").setValue(delta);
+        }
 
     }
 
@@ -77,14 +103,27 @@ public class AsyncData extends AsyncTask<String, Void, String> {
         accVals[1] = convertTwoBytesToInt1 (value[8], value[9]) / (32768/4);
         accVals[2] = convertTwoBytesToInt1 (value[10], value[11]) / (32768/4);
 
-        //x axis only
-        deltaPercent = (accVals[0] - accFloatArray[0])/accFloatArray[0];
 
-        return accVals;
+        float[] accValsFiltered = new float[3];
+        accValsFiltered[0] = lowPassFilter(accVals[0], prevAccFloatArray[0]);
+        accValsFiltered[1] = lowPassFilter(accVals[1], prevAccFloatArray[1]);
+        accValsFiltered[2] = lowPassFilter(accVals[2], prevAccFloatArray[2]);
+
+        //x axis only
+        //deltaPercent = (accVals[0] - accFloatArray[0])/accFloatArray[0];
+        deltaPercent = (accVals[0] - accValsFiltered[0])/accValsFiltered[0]; // Using Filtered
+        cumDelta += Math.abs(deltaPercent);
+
+        return accValsFiltered;//accVals;
     }
 
     public static float convertTwoBytesToInt1(byte b1, byte b2) {
         return (float) ((b2 << 8) | (b1 & 0xFF));
+    }
+
+    public static float lowPassFilter (float raw, float prev){
+        double filtered = alpha*raw + (1 - alpha)*prev;
+        return (float)filtered;
     }
 }
 

@@ -1,9 +1,13 @@
 package com.example.hsattar.monitoddler;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -23,7 +27,17 @@ import com.firebase.client.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
+
+    //private static final int MT_PERMISSION_ACCESS_CAMERA = 11;
+    private static final int MT_PERMISSION_ACCESS_STORAGE = 12;
+    private static final int MT_PERMISSION_ACCESS_GPS = 13;
+    private static final int MT_PERMISSION_ACCESS_BLUETOOTH = 14;
+    private static final int MT_PERMISSION_ACCESS_STATE = 15;
+
+    public static int counter = 0;
+
     public static final String FIREBASE_URL = "https://crackling-torch-1983.firebaseio.com/";
+
     public static Firebase ref;
 
     public final String TABLE_1 = "listCheck";
@@ -34,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        
+        checkPermissions();
 
         // Use Firebase to populate the list.
         Firebase.setAndroidContext(this);
@@ -64,6 +80,38 @@ public class MainActivity extends AppCompatActivity {
     private void view_activity() {
         Intent myIntent = new Intent(this, ViewPatient.class);
         startActivity(myIntent);
+    }
+
+    private void checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED)
+        {
+            //we can request the permission.
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, MT_PERMISSION_ACCESS_BLUETOOTH);
+            return;
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        {
+            //we can request the permission.
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},MT_PERMISSION_ACCESS_STORAGE);
+            return;
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED)
+        {
+            //we can request the permission.
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_NETWORK_STATE}, MT_PERMISSION_ACCESS_STATE);
+            return;
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
+            //we can request the permission.
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MT_PERMISSION_ACCESS_GPS);
+            return;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        checkPermissions(); //Call checkPermissions again until all permissions have been granted
     }
 
     @Override

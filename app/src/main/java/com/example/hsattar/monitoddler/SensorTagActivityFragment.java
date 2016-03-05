@@ -80,6 +80,7 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
 
         ((Button)rootView.findViewById(R.id.scanbutton)).setOnClickListener(this);
         ((Button)rootView.findViewById(R.id.clearbutton)).setOnClickListener(this);
+        clear();
         output("Turn on the Sensortag");
 
         BluetoothManager BTManager=(BluetoothManager) getContext().getSystemService(Context.BLUETOOTH_SERVICE);
@@ -160,8 +161,12 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
             }
             BTGatt=null;
 
-            BTAdapter.startLeScan(DeviceLeScanCallback);
-            output("Start scanning");
+            boolean started = BTAdapter.startLeScan(DeviceLeScanCallback);
+            if (started) {
+                output("Start scanning");
+            } else {
+                output("There was a problem scanning...");
+            }
         }
     }
 

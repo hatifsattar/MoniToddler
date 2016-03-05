@@ -21,6 +21,7 @@ public class ViewPatient extends AppCompatActivity {
     public TextView Name;
     public TextView Temp;
     public TextView HR;
+    public TextView z_axis;
     public TextView Critical;
 
     @Override
@@ -34,6 +35,7 @@ public class ViewPatient extends AppCompatActivity {
         Name = (TextView) findViewById(R.id.Name);
         Temp = (TextView) findViewById(R.id.temp);
         HR = (TextView) findViewById(R.id.heartrate);
+        z_axis = (TextView) findViewById(R.id.z_axis);
         Critical = (TextView) findViewById(R.id.critical);
 
         Name.setText("Patient X");
@@ -69,6 +71,20 @@ public class ViewPatient extends AppCompatActivity {
             public void onCancelled(FirebaseError firebaseError) {
             }
         });
+
+
+//        Firebase fb_z_axis = MainActivity.ref.child("MT").child(patient_name).child("Z-AXIS");
+//        fb_z_axis.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                String value = dataSnapshot.getValue(String.class);
+//                z_axis.setText(value);
+//            }
+//
+//            @Override
+//            public void onCancelled(FirebaseError firebaseError) {
+//            }
+//        });
 
         Firebase fb_crit = MainActivity.ref.child("MT").child(patient_name).child("CRITICAL");
         fb_crit.addValueEventListener(new ValueEventListener() {

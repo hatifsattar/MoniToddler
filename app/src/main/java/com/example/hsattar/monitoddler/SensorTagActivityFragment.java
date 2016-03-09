@@ -30,13 +30,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.example.hsattar.monitoddler.HardwareConnectorService;
+
 import com.firebase.client.Firebase;
+import com.wahoofitness.connector.conn.connections.params.ConnectionParams;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 @TargetApi(18)
-public class SensorTagActivityFragment extends Fragment implements View.OnClickListener{
+public class SensorTagActivityFragment extends HardwareConnectorFragment
+        implements View.OnClickListener {
 
     public UUID UUID_IRT_SERV=UUID.fromString("f000aa00-0451-4000-b000-000000000000");
     public UUID UUID_IRT_DATA=UUID.fromString("f000aa01-0451-4000-b000-000000000000");
@@ -47,6 +51,7 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
     //sensorTagGatt.java
     //new UUIDs for ACC https://e2e.ti.com/support/wireless_connectivity/bluetooth_low_energy/f/538/t/411571
     //more UUID stuff http://processors.wiki.ti.com/index.php/CC2650_SensorTag_User's_Guide#Data
+    // wahoo android api http://api.wahoofitness.com/android/api/1.4.2.5/WahooAndroidAPIUsersGuide.pdf
     public UUID UUID_ACC_SERV = UUID.fromString("f000aa80-0451-4000-b000-000000000000");
     public UUID UUID_ACC_DATA = UUID.fromString("f000aa81-0451-4000-b000-000000000000");
     public UUID UUID_ACC_CONF = UUID.fromString("f000aa82-0451-4000-b000-000000000000"); // 0: disable, 1: enable
@@ -65,6 +70,7 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
     private boolean showedConnectedMsg[] = {false,false}; //sensortag,wahoo tickr
     List<BluetoothGattService> serviceList;
     List <BluetoothGattCharacteristic> charList = new ArrayList<BluetoothGattCharacteristic>();
+    List <BluetoothGattDescriptor> descList = new ArrayList<BluetoothGattDescriptor>();
 
     private AsyncText task = null;
     private AsyncData taskData = null;
@@ -122,6 +128,7 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
         }
         super.onPause();
         BTDevice=null;
+        BTDeviceHR=null;
         if (BTGatt != null)
         {
             BTGatt.disconnect();
@@ -151,6 +158,9 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
                 {
                     scanning=false;
                     BTAdapter.stopLeScan(DeviceLeScanCallback);
+                    //wahoo tickr
+                    enableDiscovery(false);
+                    // end wahoo tickr
                     output("Stop scanning");
                 }
             }, 5000);
@@ -168,6 +178,9 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
             BTGatt=null;
 
             boolean started = BTAdapter.startLeScan(DeviceLeScanCallback);
+            //wahoo tickr
+            enableDiscovery(true);
+            // end wahoo tickr
             if (started) {
                 output("Start scanning");
             } else {
@@ -231,9 +244,9 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
             BluetoothGattCharacteristic characteristic;
             BluetoothGattDescriptor descriptor;
 
-            charList.clear();
             switch (ssstep) {
                 case 0: //when serviceDiscovered
+                    charList.clear();
                     serviceList = gatt.getServices();
                     if (serviceList.size() > 0) {
                         for (int ii = 0; ii < serviceList.size(); ii++) {
@@ -256,10 +269,21 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
                         // bit 0-2 for gyro, 3-5 for acc, 6 for magneto
                         // 7 for wake on motion, 8-9 acc range (0=2G, 1=4G, 2=8G, 3=16G)
                         characteristic = gatt.getService(UUID_ACC_SERV).getCharacteristic(UUID_ACC_CONF);
-                        //acc only is 111000 bin = 38 hex = 56 dec
-                        characteristic.setValue("56".getBytes());
+                        //acc gyro mag is 1111111=0x7F
+                        byte b[] = new byte[] {0x7F,0x00};
+                        characteristic.setValue(b);
                         if (gatt.writeCharacteristic(characteristic) == false) {
                             output("Could not enable ACC");
+                        }
+                    }
+                    else if (gatt.getDevice().getName().contains(DeviceNameHR)) {
+                        //for wahoo tickr
+                        for (int i = 0;i<charList.size();i++)
+                        {
+                            charList.get(i).setValue("56".getBytes());
+                            if (gatt.writeCharacteristic(charList.get(i)) == false) {
+                                output("Could not enable wahoo char "+i);
+                            }
                         }
                     }
                     break;
@@ -276,6 +300,25 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
                         descriptor = characteristic.getDescriptor(CLIENT_CONFIG_DESCRIPTOR);
                         descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
                         gatt.writeDescriptor(descriptor);
+                    }
+                    else if (gatt.getDevice().getName().contains(DeviceNameHR)) {
+                        // wahoo tickr
+                        // Enable local notifications
+                        for (int i = 0;i<charList.size();i++)
+                        {
+                            if (gatt.setCharacteristicNotification(charList.get(i), true) == false) {
+                                output("Could not set tickr notify "+i);
+                            }
+
+                            descList= charList.get(i).getDescriptors();
+
+                            //Enable remote notifications
+                            for (int ii=0;ii<descList.size();ii++)
+                            {
+                                descList.get(ii).setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                                gatt.writeDescriptor(descList.get(ii));
+                            }
+                        }
                     }
                     break;
             }
@@ -339,6 +382,17 @@ public class SensorTagActivityFragment extends Fragment implements View.OnClickL
         currentText = "";
         TextView myTextView = (TextView) rootView.findViewById(R.id.textbox);
         myTextView.setText(currentText);
+        //disconnect
+        BTDevice=null;
+        BTDeviceHR=null;
+        if (BTGatt != null)
+        {
+            BTGatt.disconnect();
+            BTGatt.close();
+        }
+        BTGatt=null;
     }
+
+    //wahoo tickr stuff
 
 }

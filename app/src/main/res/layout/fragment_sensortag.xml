@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_centerHorizontal="true"
-            android:layout_weight="4">
+            android:layout_weight="5">
 
             <TextView android:id="@+id/accX"
                 android:layout_width="match_parent"

@@ -17,10 +17,9 @@ public class AsyncData extends AsyncTask<String, Void, String> {
     public Context context;
     private View rootView;
     private byte[] byteArray;
-    private static float[] accFloatArray = {0,0,0}; // Current Reading
-    private static float[] prevAccFloatArray = {0,0,0}; //Previous reading
-    private float deltaPercent = 0;
-    private float cumDelta = 0;
+    //private static float[] accFloatArray = {0,0,0,0,0,0,0}; // Current Reading doesnt need to be saved
+    private static float[] prevAccFloatArray = {0,0,0,0,0,0,0}; //Previous reading
+    private float[] deltaPercent = {0,0,0,0,0,0,0};
 
     // Low Pass Filter
     private static double alpha = 0.5;
@@ -35,8 +34,8 @@ public class AsyncData extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... params) {
-        accFloatArray = convertAcc(byteArray);
-        prevAccFloatArray = accFloatArray;
+        prevAccFloatArray = convertAcc(byteArray);
+        //prevAccFloatArray = accFloatArray;
         return "done";
     }
 
@@ -45,17 +44,27 @@ public class AsyncData extends AsyncTask<String, Void, String> {
         TextView accX = (TextView) rootView.findViewById(R.id.accX);
         TextView accY = (TextView) rootView.findViewById(R.id.accY);
         TextView accZ = (TextView) rootView.findViewById(R.id.accZ);
-        accX.setText("X: " + accFloatArray[0]);
-        accY.setText("Y: " + accFloatArray[1]);
-        accZ.setText("deltaX: " + deltaPercent);
-
+        accX.setText("X: " + prevAccFloatArray[3] + "\ngyroX: " + prevAccFloatArray[0]
+                +"\nAccDeltaX: " + deltaPercent[3]);
+        accY.setText("Y: " + prevAccFloatArray[4] + "\ngyroY: " + prevAccFloatArray[1]
+                +"\nAccDeltaY: " + deltaPercent[4]);
+        accZ.setText("Z: " + prevAccFloatArray[5] + "\ngyroZ: " + prevAccFloatArray[2]
+                +"\nAccDeltaZ: " + deltaPercent[5]);
 
         if (SensorTagActivity.isLogging){
-            SensorTagActivityFragment.loggingText += "\n" + " X: " + accFloatArray[0] + " Y: "
-                    + accFloatArray[1] + " deltaX: " + deltaPercent;
+            SensorTagActivityFragment.loggingText +=
+                    "\n" + " X: " + prevAccFloatArray[3] +
+                           " Y: " + prevAccFloatArray[4] +
+                           " Z: " + prevAccFloatArray[5] +
+                            " gyroX: " + prevAccFloatArray[0] +
+                            " gyroY: " + prevAccFloatArray[1] +
+                            " gyroZ: " + prevAccFloatArray[2] +
+                            " AccDeltaX: " + deltaPercent[3] +
+                            " AccDeltaY: " + deltaPercent[4] +
+                            " AccDeltaZ: " + deltaPercent[5];
 
 
-            if (SensorTagActivityFragment.loggingText.length() > 100){
+            if (SensorTagActivityFragment.loggingText.length() > 150){
                 //add to file
                 try {
                     SensorTagActivity.LogWriter.append(SensorTagActivityFragment.loggingText);
@@ -68,16 +77,17 @@ public class AsyncData extends AsyncTask<String, Void, String> {
         }
         Firebase fb = MainActivity.ref.child("MT").child("patientX");
 
-        fb.child("HR").setValue(String.format("%.5f",accFloatArray[0]));
-        fb.child("TEMP").setValue(String.format("%.5f",accFloatArray[1]));
-        fb.child("Z-AXIS").setValue(String.format("%.5f",accFloatArray[2]));
+        fb.child("HR").setValue(String.format("%.5f",prevAccFloatArray[0]));
+        fb.child("TEMP").setValue(String.format("%.5f",prevAccFloatArray[1]));
+        fb.child("Z-AXIS").setValue(String.format("%.5f",prevAccFloatArray[2]));
 
 
         MainActivity.counter++;
 
         if (MainActivity.counter == 50) {//20
             MainActivity.counter = 0;
-            float delta = cumDelta*20;//8
+            //xaxis acc only! TODO add all three
+            float delta = deltaPercent[3]*20;//8
             if (delta < 2) { // Crude detection
                 fb.child("CRITICAL").setValue("Yes");
                 //fb.child("DELTA").setValue(delta);
@@ -98,23 +108,28 @@ public class AsyncData extends AsyncTask<String, Void, String> {
          * defined the positive y direction. (illustrated by the apps accelerometer
          * image)
          */
-        float[] accVals = new float[3];
-        accVals[0] = convertTwoBytesToInt1 (value[6], value[7]) / (32768/4);
-        accVals[1] = convertTwoBytesToInt1 (value[8], value[9]) / (32768/4);
-        accVals[2] = convertTwoBytesToInt1 (value[10], value[11]) / (32768/4);
+        float[] sensortagVals = new float[7];
+        //gyro
+        sensortagVals[0] = convertTwoBytesToInt1 (value[0], value[1]) / (65536 / 500);
+        sensortagVals[1] = convertTwoBytesToInt1 (value[2], value[3]) / (65536 / 500);
+        sensortagVals[2] = convertTwoBytesToInt1 (value[4], value[5]) / (65536 / 500);
+        //acc
+        sensortagVals[3] = convertTwoBytesToInt1 (value[6], value[7]) / (32768/4);
+        sensortagVals[4] = convertTwoBytesToInt1 (value[8], value[9]) / (32768/4);
+        sensortagVals[5] = convertTwoBytesToInt1 (value[10], value[11]) / (32768/4);
 
 
-        float[] accValsFiltered = new float[3];
-        accValsFiltered[0] = lowPassFilter(accVals[0], prevAccFloatArray[0]);
-        accValsFiltered[1] = lowPassFilter(accVals[1], prevAccFloatArray[1]);
-        accValsFiltered[2] = lowPassFilter(accVals[2], prevAccFloatArray[2]);
+        float[] sensortagValsFiltered = new float[7];
+        //gyro, acc, and deltas
+        for (int i = 0; i<sensortagValsFiltered.length; i++) {
+            sensortagValsFiltered[i] = lowPassFilter(sensortagVals[i], prevAccFloatArray[i]);
+            // Using Filtered previous value
+            deltaPercent[i] = (sensortagValsFiltered[i] - prevAccFloatArray[i])/prevAccFloatArray[i];
+            //deltaPercent = (sensortagVals[3] - sensortagValsFiltered[3])/sensortagValsFiltered[3];
+            //deltaPercent[i] += Math.abs(deltaPercent[i]);
+        }
 
-        //x axis only
-        //deltaPercent = (accVals[0] - accFloatArray[0])/accFloatArray[0];
-        deltaPercent = (accVals[0] - accValsFiltered[0])/accValsFiltered[0]; // Using Filtered
-        cumDelta += Math.abs(deltaPercent);
-
-        return accValsFiltered;//accVals;
+        return sensortagValsFiltered;
     }
 
     public static float convertTwoBytesToInt1(byte b1, byte b2) {

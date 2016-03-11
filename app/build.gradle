@@ -30,4 +30,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'com.firebase:firebase-client-android:2.3.1'
+    compile files('src/main/libs/androidapi.jar')
+    compile files('src/main/libs/libGoogleAnalyticsServices.jar')
 }

@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         
         checkPermissions();
 
-        // Use Firebase to populate the list.
+        // Using Firebase to populate the list.
         Firebase.setAndroidContext(this);
         ref = new Firebase(MainActivity.FIREBASE_URL);
 

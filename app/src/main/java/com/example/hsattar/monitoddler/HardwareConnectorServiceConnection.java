@@ -55,6 +55,7 @@ public class HardwareConnectorServiceConnection {
 
         Intent intent = new Intent(mContext, HardwareConnectorService.class);
         context.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+        context.startService(intent);
     }
 
     public SensorConnection connectSensor(ConnectionParams params) {

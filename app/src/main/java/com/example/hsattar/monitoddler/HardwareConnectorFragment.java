@@ -7,8 +7,10 @@ import java.util.Collection;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
+import com.wahoofitness.common.datatypes.TimeInstant;
 import com.wahoofitness.connector.HardwareConnectorEnums.SensorConnectionState;
 import com.wahoofitness.connector.capabilities.Capability.CapabilityType;
+import com.wahoofitness.connector.capabilities.Heartrate;
 import com.wahoofitness.connector.conn.connections.SensorConnection;
 import com.wahoofitness.connector.conn.connections.params.ConnectionParams;
 import com.example.hsattar.monitoddler.HardwareConnectorService;
@@ -83,11 +85,6 @@ public abstract class HardwareConnectorFragment extends Fragment implements
     public void onHardwareConnectorServiceDisconnected() {
     }
 
-    public void onNewCapabilityDetected(SensorConnection sensorConnection,
-                                        CapabilityType capabilityType) {
-
-    }
-
     public void onSensorConnectionStateChanged(SensorConnection sensorConnection,
                                                SensorConnectionState state) {
 
@@ -155,6 +152,5 @@ public abstract class HardwareConnectorFragment extends Fragment implements
                                          String currentVersionNumber, String recommendedVersion) {
 
     }
-
 }
 

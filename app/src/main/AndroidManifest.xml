@@ -27,6 +27,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service
+            android:name="com.example.hsattar.monitoddler.HardwareConnectorService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
         <activity android:name=".ViewPatient" />
         <activity android:name=".UploadVitals" />
         <activity android:name=".SensorTagActivity" />

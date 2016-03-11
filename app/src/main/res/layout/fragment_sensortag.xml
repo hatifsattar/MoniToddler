@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_centerHorizontal="true"
-            android:layout_weight="5">
+            android:layout_weight="7">
 
             <TextView android:id="@+id/accX"
                 android:layout_width="match_parent"
@@ -44,6 +44,11 @@
                 android:layout_weight="1"
                 android:textColor="@color/colorViewText"/>
             <TextView android:id="@+id/accZ"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/colorViewText"/>
+            <TextView android:id="@+id/heartrateText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

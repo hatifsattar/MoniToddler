@@ -27,13 +27,21 @@ import android.widget.Toast;
 
 import java.io.Console;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
 import com.example.hsattar.monitoddler.HardwareConnectorService;
 
 import com.firebase.client.Firebase;
+import com.wahoofitness.connector.capabilities.Capability;
+import com.wahoofitness.connector.capabilities.Capability.CapabilityType;
+import com.wahoofitness.connector.capabilities.Heartrate;
+import com.wahoofitness.connector.capabilities.Heartrate.Data;
+import com.wahoofitness.connector.conn.connections.SensorConnection;
 import com.wahoofitness.connector.conn.connections.params.ConnectionParams;
+
 
 /**
  * A placeholder fragment containing a simple view.
@@ -65,12 +73,13 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
     public static String loggingText = "";
     public BluetoothAdapter BTAdapter;
     public BluetoothDevice BTDevice;
-    public BluetoothDevice BTDeviceHR;
+    public SensorConnection wahooBTDeviceHR;
     public BluetoothGatt BTGatt;
     private boolean showedConnectedMsg[] = {false,false}; //sensortag,wahoo tickr
-    List<BluetoothGattService> serviceList;
+    List <BluetoothGattService> serviceList;
     List <BluetoothGattCharacteristic> charList = new ArrayList<BluetoothGattCharacteristic>();
     List <BluetoothGattDescriptor> descList = new ArrayList<BluetoothGattDescriptor>();
+    Collection<ConnectionParams> wahooBTdevices = new ArrayList<ConnectionParams>();
 
     private AsyncText task = null;
     private AsyncData taskData = null;
@@ -128,7 +137,11 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
         }
         super.onPause();
         BTDevice=null;
-        BTDeviceHR=null;
+        if (wahooBTDeviceHR != null)
+        {
+            wahooBTDeviceHR.disconnect();
+        }
+        wahooBTDeviceHR = null;
         if (BTGatt != null)
         {
             BTGatt.disconnect();
@@ -179,7 +192,7 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
 
             boolean started = BTAdapter.startLeScan(DeviceLeScanCallback);
             //wahoo tickr
-            enableDiscovery(true);
+            boolean test = enableDiscovery(true);
             // end wahoo tickr
             if (started) {
                 output("Start scanning");
@@ -219,20 +232,17 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
             // wahoo tickr
             else if (device.getName().contains(DeviceNameHR))
             {
-                if (BTDeviceHR == null) {
-                    BTDeviceHR=device;
-                    BTGatt=BTDeviceHR.connectGatt(getContext(),false,GattCallback);
-                }
-                else {
-                    if (BTDeviceHR.getAddress().equals(device.getAddress())) {
-                        if (!showedConnectedMsg[1]) {
-                            output("Wahoo Tickr already connected!");
-                            showedConnectedMsg[1] = true;
+                //waho tickr API
+                wahooBTdevices = getDiscoveredConnectionParams();
+                for (ConnectionParams elem : wahooBTdevices) {
+                    if (elem.getName().contains(DeviceNameHR)) {
+                        if (wahooBTDeviceHR == null) {
+                            //connect to wahoo tickr if name matches
+                            output(device.getName() + ":" + device.getAddress() + ", rssi:" + rssi);
+                            wahooBTDeviceHR = connectSensor(elem);
                         }
-                        return;
                     }
                 }
-                output(device.getName() + ":" + device.getAddress() + ", rssi:" + rssi);
             }
         }
     };
@@ -276,16 +286,6 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
                             output("Could not enable ACC");
                         }
                     }
-                    else if (gatt.getDevice().getName().contains(DeviceNameHR)) {
-                        //for wahoo tickr
-                        for (int i = 0;i<charList.size();i++)
-                        {
-                            charList.get(i).setValue("56".getBytes());
-                            if (gatt.writeCharacteristic(charList.get(i)) == false) {
-                                output("Could not enable wahoo char "+i);
-                            }
-                        }
-                    }
                     break;
 
                 case 1: //descriptor write
@@ -300,25 +300,6 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
                         descriptor = characteristic.getDescriptor(CLIENT_CONFIG_DESCRIPTOR);
                         descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
                         gatt.writeDescriptor(descriptor);
-                    }
-                    else if (gatt.getDevice().getName().contains(DeviceNameHR)) {
-                        // wahoo tickr
-                        // Enable local notifications
-                        for (int i = 0;i<charList.size();i++)
-                        {
-                            if (gatt.setCharacteristicNotification(charList.get(i), true) == false) {
-                                output("Could not set tickr notify "+i);
-                            }
-
-                            descList= charList.get(i).getDescriptors();
-
-                            //Enable remote notifications
-                            for (int ii=0;ii<descList.size();ii++)
-                            {
-                                descList.get(ii).setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                                gatt.writeDescriptor(descList.get(ii));
-                            }
-                        }
                     }
                     break;
             }
@@ -354,7 +335,7 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
         //when sensor values gets updated, this gets hit
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
             if (UUID_ACC_DATA.equals(characteristic.getUuid())) {
-                outputData(characteristic.getValue());
+                outputData(characteristic.getValue(),getHeartrateData());
             }
         }
     };
@@ -370,10 +351,10 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
         task.execute(newText, currentText);
     }
 
-    public void outputData(byte[] value)
+    public void outputData(byte[] value, Heartrate.Data hrData)
     {
 
-        taskData=new AsyncData(rootView.getContext(),rootView.getRootView(),value);
+        taskData=new AsyncData(rootView.getContext(),rootView.getRootView(),value,hrData);
         taskData.execute();
     }
 
@@ -384,15 +365,55 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
         myTextView.setText(currentText);
         //disconnect
         BTDevice=null;
-        BTDeviceHR=null;
         if (BTGatt != null)
         {
             BTGatt.disconnect();
             BTGatt.close();
         }
         BTGatt=null;
+        if (wahooBTDeviceHR != null)
+        {
+            wahooBTDeviceHR.disconnect();
+        }
+        wahooBTDeviceHR = null;
     }
 
-    //wahoo tickr stuff
+    //heartrate from wahoo tickr
+    private final Heartrate.Listener mHeartrateListener = new Heartrate.Listener() {
 
+        @Override
+        public void onHeartrateData(Heartrate.Data data) {
+            outputData(null, data);
+        }
+
+        @Override
+        public void onHeartrateDataReset() {
+            //registerCallbackResult("onHeartrateDataReset", TimeInstant.now());
+        }
+    };
+
+    //overwriting HardWareConnectionFragment
+    public void onNewCapabilityDetected(SensorConnection sensorConnection,
+                                        CapabilityType capabilityType) {
+        if(capabilityType==CapabilityType.Heartrate){
+            Heartrate heartrate=(Heartrate)sensorConnection.getCurrentCapability(CapabilityType.Heartrate);
+            heartrate.addListener(mHeartrateListener);
+        }
+    }
+
+    Heartrate.Data getHeartrateData()
+    {
+        if(wahooBTDeviceHR!=null){
+            Heartrate heartrate=(Heartrate)wahooBTDeviceHR.getCurrentCapability(CapabilityType.Heartrate);
+            if(heartrate!=null){
+                return heartrate.getHeartrateData();
+            }else{
+                //The sensor connection does not currently support the heartrate capability
+                return null;
+            }
+        }else{
+            //Sensor not connected
+            return null;
+        }
+    }
 }

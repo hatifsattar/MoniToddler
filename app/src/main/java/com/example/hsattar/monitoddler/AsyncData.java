@@ -7,6 +7,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
+import com.wahoofitness.connector.capabilities.Heartrate;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,6 +18,7 @@ public class AsyncData extends AsyncTask<String, Void, String> {
     public Context context;
     private View rootView;
     private byte[] byteArray;
+    private Heartrate.Data hrData;
     //private static float[] accFloatArray = {0,0,0,0,0,0,0}; // Current Reading doesnt need to be saved
     private static float[] prevAccFloatArray = {0,0,0,0,0,0,0}; //Previous reading
     private float[] deltaPercent = {0,0,0,0,0,0,0};
@@ -26,15 +28,18 @@ public class AsyncData extends AsyncTask<String, Void, String> {
 
 
 
-    public AsyncData(Context context, View rootView, byte[] byteArray) {
+    public AsyncData(Context context, View rootView, byte[] byteArray, Heartrate.Data hrData) {
         this.context = context;
         this.rootView = rootView;
         this.byteArray = byteArray;
+        this.hrData = hrData;
     }
 
     @Override
     protected String doInBackground(String... params) {
-        prevAccFloatArray = convertAcc(byteArray);
+        if (byteArray != null) {
+            prevAccFloatArray = convertAcc(byteArray);
+        }
         //prevAccFloatArray = accFloatArray;
         return "done";
     }
@@ -44,12 +49,14 @@ public class AsyncData extends AsyncTask<String, Void, String> {
         TextView accX = (TextView) rootView.findViewById(R.id.accX);
         TextView accY = (TextView) rootView.findViewById(R.id.accY);
         TextView accZ = (TextView) rootView.findViewById(R.id.accZ);
+        TextView HRText = (TextView) rootView.findViewById(R.id.heartrateText);
         accX.setText("X: " + prevAccFloatArray[3] + "\ngyroX: " + prevAccFloatArray[0]
                 +"\nAccDeltaX: " + deltaPercent[3]);
         accY.setText("Y: " + prevAccFloatArray[4] + "\ngyroY: " + prevAccFloatArray[1]
                 +"\nAccDeltaY: " + deltaPercent[4]);
         accZ.setText("Z: " + prevAccFloatArray[5] + "\ngyroZ: " + prevAccFloatArray[2]
                 +"\nAccDeltaZ: " + deltaPercent[5]);
+        HRText.setText("HR " + hrData.getHeartrate() + "\n AvgHR " + hrData.getAvgHeartrate());
 
         if (SensorTagActivity.isLogging){
             SensorTagActivityFragment.loggingText +=

@@ -3,6 +3,7 @@ package com.example.hsattar.monitoddler;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +23,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
@@ -29,6 +32,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class SensorTagActivity extends AppCompatActivity {
+
+    public static String patient_id = "";
+    public static String patient_name = "";
+    public static Firebase fb_ref;
 
     private BluetoothAdapter mBtAdapter = null;
     private Menu menu;
@@ -43,6 +50,20 @@ public class SensorTagActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        if (bundle == null) {
+            patient_id = "patientX";
+            patient_name = "patientX";
+            fb_ref = MainActivity.ref.child("MT");
+        }
+        else{
+            patient_id = bundle.getString("ID");
+            patient_name = bundle.getString("NAME");
+            fb_ref = MainActivity.ref.child("MT2");
+        }
+
         setContentView(R.layout.activity_sensortag);
 
         // Check for Bluetooth support, if not exit application.
@@ -87,7 +108,8 @@ public class SensorTagActivity extends AppCompatActivity {
                     Date now = new Date();
                     File dir = new File(fileDir);
                     dir.mkdirs();
-                    logFile = new File(dir, "Log_"+formatter.format(now)+".txt");
+                    String name = patient_name.replaceAll(" ", "_");
+                    logFile = new File(dir, "Log_" + name + "_" + formatter.format(now)+".txt");
                     //logFile.createNewFile();
                     fOut = new FileOutputStream(logFile);
                     LogWriter = new OutputStreamWriter(fOut);

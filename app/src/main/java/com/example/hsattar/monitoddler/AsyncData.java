@@ -83,17 +83,18 @@ public class AsyncData extends AsyncTask<String, Void, String> {
                 SensorTagActivityFragment.loggingText = "";
             }
         }
-        Firebase fb = MainActivity.ref.child("MT").child("patientX");
+        //Firebase fb = MainActivity.ref.child("MT").child("patientX");
+        Firebase fb = SensorTagActivity.fb_ref.child(SensorTagActivity.patient_id);
 
         fb.child("HR").setValue(String.format("%.5f",prevAccFloatArray[0]));
         fb.child("TEMP").setValue(String.format("%.5f",prevAccFloatArray[1]));
         fb.child("Z-AXIS").setValue(String.format("%.5f",prevAccFloatArray[2]));
 
 
-        MainActivity.counter++;
+        MainActivity.sampling_counter++;
 
-        if (MainActivity.counter == 50) {//20
-            MainActivity.counter = 0;
+        if (MainActivity.sampling_counter == 50) {//20
+            MainActivity.sampling_counter = 0;
             //xaxis acc only! TODO add all three
             float delta = deltaPercent[3]*20;//8
             if (delta < 2) { // Crude detection

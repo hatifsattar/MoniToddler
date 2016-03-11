@@ -22,6 +22,16 @@ public class ViewPatient extends AppCompatActivity {
     public final String CRITICAL_ENTRY = "CRITICAL";
 
     public String patient_name = "";
+    Firebase fb_ref;
+    Firebase fb_hr;
+    Firebase fb_temp;
+    Firebase fb_crit;
+    Firebase fb_z_axis;
+    ValueEventListener hr_listener;
+    ValueEventListener temp_listener;
+    ValueEventListener crit_listener;
+    ValueEventListener ref_listener;
+    ValueEventListener z_axis_listener;
 
     public TextView Name;
     public TextView Temp;
@@ -35,7 +45,16 @@ public class ViewPatient extends AppCompatActivity {
         setContentView(R.layout.activity_view_patient);
         Firebase.setAndroidContext(this);
 
-        patient_name = "patientX";
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        if (bundle == null) {
+            patient_name = "patientX";
+            fb_ref = MainActivity.ref.child("MT");
+        }
+        else{
+            patient_name = bundle.getString("ID");
+            fb_ref = MainActivity.ref.child("MT2");
+        }
 
         Name = (TextView) findViewById(R.id.Name);
         Temp = (TextView) findViewById(R.id.temp);
@@ -43,16 +62,34 @@ public class ViewPatient extends AppCompatActivity {
         z_axis = (TextView) findViewById(R.id.z_axis);
         Critical = (TextView) findViewById(R.id.critical);
 
-        Name.setText("Patient X");
-
-        fire_base_setup();
+        firebase_setup();
 
     }
 
-    private void fire_base_setup() {
+    private void firebase_setup() {
 
-        Firebase fb_hr = MainActivity.ref.child("MT").child(patient_name).child("HR");
-        fb_hr.addValueEventListener(new ValueEventListener() {
+        Firebase head = fb_ref.child(patient_name);
+        head.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String name = dataSnapshot.child("NAME").getValue(String.class);
+                Name.setText(name);
+//                for (DataSnapshot d : dataSnapshot.getChildren()) {
+//                    if (d.getChildrenCount() < MainActivity.databse_fields_count) { return; }
+//                    if ((d != null) && (d.getKey().matches("NAME"))) {
+//                        String name = d.getValue(String.class);
+//                        Name.setText(name);
+//                    }
+//                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        });
+
+        fb_hr = fb_ref.child(patient_name).child("HR");
+        hr_listener = fb_hr.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String value = dataSnapshot.getValue(String.class);
@@ -64,8 +101,8 @@ public class ViewPatient extends AppCompatActivity {
             }
         });
 
-        Firebase fb_temp = MainActivity.ref.child("MT").child(patient_name).child("TEMP");
-        fb_temp.addValueEventListener(new ValueEventListener() {
+        fb_temp = fb_ref.child(patient_name).child("TEMP");
+        temp_listener = fb_temp.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String value = dataSnapshot.getValue(String.class);
@@ -77,31 +114,32 @@ public class ViewPatient extends AppCompatActivity {
             }
         });
 
+        fb_z_axis = fb_ref.child(patient_name).child("Z-AXIS");
+        z_axis_listener = fb_z_axis.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String value = dataSnapshot.getValue(String.class);
+                z_axis.setText(value);
+            }
 
-//        Firebase fb_z_axis = MainActivity.ref.child("MT").child(patient_name).child("Z-AXIS");
-//        fb_z_axis.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                String value = dataSnapshot.getValue(String.class);
-//                z_axis.setText(value);
-//            }
-//
-//            @Override
-//            public void onCancelled(FirebaseError firebaseError) {
-//            }
-//        });
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        });
 
-        Firebase fb_crit = MainActivity.ref.child("MT").child(patient_name).child("CRITICAL");
-        fb_crit.addValueEventListener(new ValueEventListener() {
+        fb_crit = fb_ref.child(patient_name).child("CRITICAL");
+        crit_listener = fb_crit.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String value = dataSnapshot.getValue(String.class);
                 Critical.setText(value);
-                if (value.equals("Yes")) {
-                    Critical.setTextColor(Color.parseColor("#f2181b"));
-                    //SendNotification(patient_name);
-                } else {
-                    Critical.setTextColor(Color.parseColor("#04ea00"));
+                if (value!=null) {
+                    if (value.equals("Yes")) { //TODO null pointer here
+                        Critical.setTextColor(Color.parseColor("#f2181b"));
+                        //SendNotification(patient_name);
+                    } else {
+                        Critical.setTextColor(Color.parseColor("#04ea00"));
+                    }
                 }
             }
 
@@ -141,5 +179,39 @@ public class ViewPatient extends AppCompatActivity {
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         // Builds the notification and issues it.
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();//TODO
+        //fb_ref.goOffline();
+
+        if (ref_listener!=null) fb_ref.removeEventListener(ref_listener);
+        if (crit_listener!=null) fb_crit.removeEventListener(crit_listener);
+        if (hr_listener!=null) fb_hr.removeEventListener(hr_listener);
+        if (temp_listener!=null) fb_temp.removeEventListener(temp_listener);
+        if (z_axis_listener!=null) fb_z_axis.removeEventListener(z_axis_listener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+//        fb_ref.removeEventListener(ref_listener);
+//        fb_crit.removeEventListener(crit_listener);
+//        fb_hr.removeEventListener(hr_listener);
+//        fb_temp.removeEventListener(temp_listener);
+//        fb_z_axis.removeEventListener(z_axis_listener);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //fb_ref.goOnline();
+
+//        fb_ref.addValueEventListener(ref_listener);
+//        fb_crit.addValueEventListener(crit_listener);
+//        fb_hr.addValueEventListener(hr_listener);
+//        fb_temp.addValueEventListener(temp_listener);
+//        fb_z_axis.addValueEventListener(z_axis_listener);
     }
 }

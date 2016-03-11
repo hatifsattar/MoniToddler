@@ -34,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int MT_PERMISSION_ACCESS_BLUETOOTH = 14;
     private static final int MT_PERMISSION_ACCESS_STATE = 15;
 
-    public static int counter = 0;
+    public static int sampling_counter = 0;
+    public static int databse_fields_count = 8; //IMPORTANT - Update this when increasing number of upload fields
 
     public static final String FIREBASE_URL = "https://crackling-torch-1983.firebaseio.com/";
 
@@ -62,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
 
         btn_view.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                view_activity();
+                //view_activity();
+                view_all_patients_activity();
             }
         });
 
@@ -79,12 +81,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void update_activity() {
-        Intent myIntent = new Intent(this, SensorTagActivity.class);
+        //Intent myIntent = new Intent(this, SensorTagActivity.class);
+        Intent myIntent = new Intent(this, ViewPatientsList.class);
+        myIntent.putExtra("TRANSMIT", 1);
         startActivity(myIntent);
     }
 
     private void view_activity() {
         Intent myIntent = new Intent(this, ViewPatient.class);
+        startActivity(myIntent);
+    }
+
+    private void view_all_patients_activity() {
+        Intent myIntent = new Intent(this, ViewPatientsList.class);
+        myIntent.putExtra("TRANSMIT", 0);
         startActivity(myIntent);
     }
 

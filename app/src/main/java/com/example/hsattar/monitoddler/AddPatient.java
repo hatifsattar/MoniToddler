@@ -23,6 +23,9 @@ public class AddPatient extends AppCompatActivity {
     private EditText doctor;
     private Button add;
     private Button transmit;
+
+    Firebase fb_ref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +33,7 @@ public class AddPatient extends AppCompatActivity {
 
         PATIENT_NAME = "";
         PATIENT_ID = "";
+        fb_ref = MainActivity.ref.child("MT2");
 
         name = (EditText) findViewById(R.id.patientName);
         age = (EditText) findViewById(R.id.patientAge);
@@ -46,9 +50,10 @@ public class AddPatient extends AppCompatActivity {
 
         transmit.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                remove_selected_patient();
+                //remove_selected_patient();
             }
         });
+        transmit.setVisibility(View.INVISIBLE);
     }
 
     private void remove_selected_patient() {
@@ -56,8 +61,7 @@ public class AddPatient extends AppCompatActivity {
             print_message("Sorry, no patient selected!");
         }
         else {
-            Firebase fb = MainActivity.ref.child("MT");
-            fb.child(PATIENT_ID).removeValue();
+            fb_ref.child(PATIENT_ID).removeValue();
             print_message("Patient " + PATIENT_NAME + " removed from database");
             PATIENT_ID = "";
             PATIENT_NAME = "";
@@ -93,37 +97,46 @@ public class AddPatient extends AppCompatActivity {
             final String DOCTOR = d.substring(0,1).toUpperCase() + d.substring(1);//Capitalize first letter
             final String ID = case_number.getText().toString();
 
-            Firebase fb = MainActivity.ref.child("MT");//.child(CASE);
-            fb.child(ID).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.getValue() != null) {
-                        //patient exists
-                        print_message("Sorry, Another patient already exists for this File Number");
-                    } else {
-                        //patient does not exist
-                        add_patient(NAME, AGE, DOCTOR, ID);
-                        print_message("Added new patient, " + NAME);
+            //Check if Case number already exists
+            if (fb_ref.child(ID) != null) { //Database could be empty at start - so need to check
+                fb_ref.child(ID).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getValue() != null) {
+                            //patient exists
+                            print_message("Sorry, Another patient already exists for this File Number");
+                        } else {
+                            //patient does not exist
+                            add_patient(NAME, AGE, DOCTOR, ID);
+                            print_message("Added new patient, " + NAME);
+                        }
                     }
-                }
 
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {
-                }
-            });
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+                    }
+                });
+            }
 
         }
     }
 
     private void add_patient(String Name, String Age, String Doctor, String Id){
-        Firebase fb = MainActivity.ref.child("MT").child(Id);
-        fb.child("NAME").setValue(Name);
-        fb.child("AGE").setValue(Age);
-        fb.child("DOCTOR").setValue(Doctor);
+        Firebase child_ref = fb_ref.child(Id);
+        child_ref.child("NAME").setValue(Name);//1
+        child_ref.child("AGE").setValue(Age);//2
+        child_ref.child("DOCTOR").setValue(Doctor);//3
 
-        fb.child("HR").setValue("-");
-        fb.child("TEMP").setValue("-");
-        fb.child("CRITICAL").setValue("-");
+        child_ref.child("HR").setValue("-");//4
+        child_ref.child("TEMP").setValue("-");//5
+        child_ref.child("CRITICAL").setValue("No");//6
+        child_ref.child("Z-AXIS").setValue("-");//7
+        child_ref.child("DELTA").setValue("-");//8
+
+        //------------------------
+        //----- IMPORTANT !!! ----
+        //------------------------
+        MainActivity.databse_fields_count = 8; // MAKE SURE this counter corresponds to the number of Fields set to database above
 
         PATIENT_NAME = Name;
         PATIENT_ID = Id;

@@ -11,5 +11,13 @@
     <color name="colorMainButtonBorder">#32889b</color>
     <color name="colorMainBackground">#0c1818</color>
     <color name="colorAddBackground">#e3ffff</color>
+    <color name="colorViewBackground">#0c1818</color>
+    <color name="colorViewBackgroundLight">#a5e6fd</color>
+    <color name="colorlistBorder">#32889b</color>
+    <color name="colorlistFontName">#ffea00</color>
+    <color name="colorlistFontAge">#e7fff5</color>
+    <color name="colorlistFontDesc">#84ffff</color>
+    <color name="colorlistFontVitals">#ffc9b8</color>
+    <color name="colorlistlistitembackground">#0c1818</color>
 
 </resources>

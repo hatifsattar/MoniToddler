@@ -99,7 +99,9 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
         ((Button)rootView.findViewById(R.id.scanbutton)).setOnClickListener(this);
         ((Button)rootView.findViewById(R.id.clearbutton)).setOnClickListener(this);
         clear();
-        output("Turn on Bluetooth Device(s) and press Scan");
+        //output("Beginning Transmission for Patient: " + SensorTagActivity.patient_name + " ...");
+        output("Beginning Transmission for Patient: " + SensorTagActivity.patient_name + " ...\n" +
+                "Turn on Bluetooth Device(s) and press Scan");
 
         BluetoothManager BTManager=(BluetoothManager) getContext().getSystemService(Context.BLUETOOTH_SERVICE);
         BTAdapter=BTManager.getAdapter();

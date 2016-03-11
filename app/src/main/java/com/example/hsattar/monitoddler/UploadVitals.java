@@ -1,5 +1,6 @@
 package com.example.hsattar.monitoddler;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,12 +15,27 @@ public class UploadVitals extends AppCompatActivity {
     public EditText enter_temp;
     public Button send;
 
-    public String patient_name = "";
+    public static String patient_id = "";
+    public static String patient_name = "";
+    public static Firebase fb_ref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_vitals);
-        patient_name = "patientX";
+
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        if (bundle == null) {
+            patient_id = "patientX";
+            patient_name = "patientX";
+            fb_ref = MainActivity.ref.child("MT");
+        }
+        else{
+            patient_id = bundle.getString("ID");
+            patient_name = bundle.getString("NAME");
+            fb_ref = MainActivity.ref.child("MT2");
+        }
 
         enter_hr = (EditText) findViewById(R.id.set_hr);
         enter_temp = (EditText) findViewById(R.id.set_temp);
@@ -39,7 +55,7 @@ public class UploadVitals extends AppCompatActivity {
 
     private void set_vitals(String hrate_rate, int hr_num, String temp, int temp_num) {
 
-        Firebase fb = MainActivity.ref.child("MT").child(patient_name);
+        Firebase fb = fb_ref.child(patient_id);
 
         fb.child("HR").setValue(hrate_rate);
         fb.child("TEMP").setValue(temp);

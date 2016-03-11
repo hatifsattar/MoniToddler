@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="@dimen/activity_vertical_margin"
+    android:layout_marginRight="@dimen/activity_vertical_margin"
+    android:layout_marginTop="@dimen/activity_horizontal_margin"
+    android:layout_marginBottom="@dimen/activity_horizontal_margin"
+    android:padding="7dp"
+    android:background="@drawable/custom_list_item">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="30dp"
+        android:textColor="@color/colorlistFontName"
+        android:text="Patient Name"
+        android:id="@+id/patient_name"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Ward Id: ABC123"
+        android:id="@+id/ward_id"
+        android:textColor="@color/colorlistFontDesc"
+        android:layout_below="@+id/patient_name"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Doctor: John Smith"
+        android:textColor="@color/colorlistFontDesc"
+        android:id="@+id/doctor_name"
+        android:layout_below="@+id/ward_id"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Case: Jaundice"
+        android:textColor="@color/colorlistFontDesc"
+        android:id="@+id/case_name"
+        android:layout_below="@+id/doctor_name"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Heart Rate: 80"
+        android:textColor="@color/colorlistFontVitals"
+        android:id="@+id/heartrate"
+        android:layout_alignTop="@+id/ward_id"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Blood Pressure: 80, 120"
+        android:textColor="@color/colorlistFontVitals"
+        android:id="@+id/bloodpressure"
+        android:layout_below="@+id/heartrate"
+        android:layout_alignRight="@+id/heartrate"
+        android:layout_alignEnd="@+id/heartrate" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Saturation: 100"
+        android:textColor="@color/colorlistFontVitals"
+        android:id="@+id/saturation"
+        android:layout_below="@+id/bloodpressure"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Temperature: 30*C"
+        android:textColor="@color/colorlistFontVitals"
+        android:id="@+id/temperature"
+        android:layout_below="@+id/saturation"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Last Update: 22mins ago"
+        android:textColor="@color/colorlistFontVitals"
+        android:id="@+id/last_updated"
+        android:layout_below="@+id/temperature"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+</RelativeLayout>

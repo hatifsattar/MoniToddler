@@ -56,7 +56,8 @@ public class AsyncData extends AsyncTask<String, Void, String> {
                 +"\nAccDeltaY: " + deltaPercent[4]);
         accZ.setText("Z: " + prevAccFloatArray[5] + "\ngyroZ: " + prevAccFloatArray[2]
                 +"\nAccDeltaZ: " + deltaPercent[5]);
-        HRText.setText("HR " + hrData.getHeartrate() + "\n AvgHR " + hrData.getAvgHeartrate());
+        if (hrData != null)
+            HRText.setText("HR " + hrData.getHeartrate() + "\n AvgHR " + hrData.getAvgHeartrate());
 
         if (SensorTagActivity.isLogging){
             SensorTagActivityFragment.loggingText +=

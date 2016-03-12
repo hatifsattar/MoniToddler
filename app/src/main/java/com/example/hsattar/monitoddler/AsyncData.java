@@ -92,9 +92,8 @@ public class AsyncData extends AsyncTask<String, Void, String> {
 
         if (hrData != null) {
             //Write heart rate after cutting it to 5 significant numbers
-            String hr = hrData.getAvgHeartrate().toString();
-            int max_length = (hr.length() < 5)? hr.length():5;
-            String hr_cut = hr.substring(0, max_length);
+            String hr = hrData.getHeartrate().toString();
+            String hr_cut = hr.substring(10, hr.length());
             fb.child("HR").setValue(hr_cut);
         }
         fb.child("X-AXIS").setValue(String.format("%.5f",prevAccFloatArray[0]));

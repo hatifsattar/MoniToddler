@@ -17,7 +17,7 @@
     <color name="colorlistFontName">#ffea00</color>
     <color name="colorlistFontAge">#e7fff5</color>
     <color name="colorlistFontDesc">#84ffff</color>
-    <color name="colorlistFontVitals">#ffc9b8</color>
+    <color name="colorlistFontVitals">#ff9e80</color>
     <color name="colorlistlistitembackground">#0c1818</color>
 
 </resources>

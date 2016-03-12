@@ -1,6 +1,9 @@
 package com.example.hsattar.monitoddler;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -18,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -27,21 +31,23 @@ import com.firebase.client.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
-
-    //private static final int MT_PERMISSION_ACCESS_CAMERA = 11;
     private static final int MT_PERMISSION_ACCESS_STORAGE = 12;
     private static final int MT_PERMISSION_ACCESS_GPS = 13;
     private static final int MT_PERMISSION_ACCESS_BLUETOOTH = 14;
     private static final int MT_PERMISSION_ACCESS_STATE = 15;
 
+    public static int EMERGENCY_NOTIFICATION_ENABLE;
+
     public static int sampling_counter = 0;
-    public static int databse_fields_count = 8; //IMPORTANT - Update this when increasing number of upload fields
+    public static int databse_fields_count = 11; //IMPORTANT - Update this when increasing number of upload fields
 
     public static final String FIREBASE_URL = "https://crackling-torch-1983.firebaseio.com/";
 
     public static Firebase ref;
+    private Menu menu;
+    private Context mContext;
 
-    public final String TABLE_1 = "listCheck";
+    //public final String TABLE_1 = "listCheck";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
         // Using Firebase to populate the list.
         Firebase.setAndroidContext(this);
         ref = new Firebase(MainActivity.FIREBASE_URL);
+        mContext = this;
+
+        EMERGENCY_NOTIFICATION_ENABLE = 0;
 
         // Add items via the Button and EditText at the bottom of the window.
         final Button btn_view = (Button) findViewById(R.id.viewPatient);
@@ -139,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        this.menu = menu;
         return true;
     }
 
@@ -151,9 +161,39 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            MenuItem settingsTitle = menu.findItem(R.id.action_settings);
+            if (EMERGENCY_NOTIFICATION_ENABLE == 1){
+                EMERGENCY_NOTIFICATION_ENABLE = 0;
+                settingsTitle.setTitle("Enable Notification");
+                Toast.makeText(this, "Disabling Notifications", Toast.LENGTH_SHORT).show();
+            } else {
+                EMERGENCY_NOTIFICATION_ENABLE = 1;
+                settingsTitle.setTitle("Disable Notification");
+                Toast.makeText(this, "Enabling Notifications", Toast.LENGTH_SHORT).show();
+            }
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Toast.makeText(this, "Exiting MoniToddler - Disabling Notifications", Toast.LENGTH_SHORT).show();
+        EMERGENCY_NOTIFICATION_ENABLE = 0;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 }

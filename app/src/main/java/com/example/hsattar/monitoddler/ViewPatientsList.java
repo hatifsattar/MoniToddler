@@ -257,9 +257,12 @@ public class ViewPatientsList extends AppCompatActivity {
                         String age = d.child("AGE").getValue().toString();
                         String hr = d.child("HR").getValue().toString();
                         String temp = d.child("TEMP").getValue().toString();
-                        String rr = d.child("Z-AXIS").getValue().toString();
+                        String rr = d.child("RR").getValue().toString();
+                        String x_axis = d.child("X-AXIS").getValue().toString();
+                        String y_axis = d.child("Y-AXIS").getValue().toString();
+                        String z_axis = d.child("Z-AXIS").getValue().toString();
 
-                        PatientInfo patientInfo = new PatientInfo(name, age, doctor, id, critical, hr, temp, rr);
+                        PatientInfo patientInfo = new PatientInfo(name, age, doctor, id, critical, hr, temp, rr, x_axis, y_axis, z_axis);
                         infoArrayList.add(patientInfo);
                     }
                 }

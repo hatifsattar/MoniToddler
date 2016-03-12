@@ -21,21 +21,31 @@ public class ViewPatient extends AppCompatActivity {
     public final String HEART_RATE_ENTRY = "HR";
     public final String CRITICAL_ENTRY = "CRITICAL";
 
+    public String patient_id = "";
     public String patient_name = "";
     Firebase fb_ref;
     Firebase fb_hr;
-    Firebase fb_temp;
+    //Firebase fb_temp;
     Firebase fb_crit;
+    Firebase fb_x_axis;
+    Firebase fb_y_axis;
     Firebase fb_z_axis;
+    Firebase fb_rr;
     ValueEventListener hr_listener;
-    ValueEventListener temp_listener;
+    //ValueEventListener temp_listener;
     ValueEventListener crit_listener;
     ValueEventListener ref_listener;
+    ValueEventListener x_axis_listener;
+    ValueEventListener y_axis_listener;
     ValueEventListener z_axis_listener;
+    ValueEventListener rr_listener;
 
     public TextView Name;
-    public TextView Temp;
+    //public TextView Temp;
     public TextView HR;
+    public TextView RR;
+    public TextView x_axis;
+    public TextView y_axis;
     public TextView z_axis;
     public TextView Critical;
 
@@ -48,17 +58,19 @@ public class ViewPatient extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         if (bundle == null) {
-            patient_name = "patientX";
+            patient_id = "patientX";
             fb_ref = MainActivity.ref.child("MT");
         }
         else{
-            patient_name = bundle.getString("ID");
+            patient_id = bundle.getString("ID");
             fb_ref = MainActivity.ref.child("MT2");
         }
 
         Name = (TextView) findViewById(R.id.Name);
-        Temp = (TextView) findViewById(R.id.temp);
         HR = (TextView) findViewById(R.id.heartrate);
+        RR = (TextView) findViewById(R.id.resprate);
+        x_axis = (TextView) findViewById(R.id.x_axis);
+        y_axis = (TextView) findViewById(R.id.temp);
         z_axis = (TextView) findViewById(R.id.z_axis);
         Critical = (TextView) findViewById(R.id.critical);
 
@@ -68,12 +80,13 @@ public class ViewPatient extends AppCompatActivity {
 
     private void firebase_setup() {
 
-        Firebase head = fb_ref.child(patient_name);
+        Firebase head = fb_ref.child(patient_id);
         head.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String name = dataSnapshot.child("NAME").getValue(String.class);
                 Name.setText(name);
+                patient_name = name;
 //                for (DataSnapshot d : dataSnapshot.getChildren()) {
 //                    if (d.getChildrenCount() < MainActivity.databse_fields_count) { return; }
 //                    if ((d != null) && (d.getKey().matches("NAME"))) {
@@ -88,7 +101,8 @@ public class ViewPatient extends AppCompatActivity {
             }
         });
 
-        fb_hr = fb_ref.child(patient_name).child("HR");
+        //Heart Rate
+        fb_hr = fb_ref.child(patient_id).child("HR");
         hr_listener = fb_hr.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -101,12 +115,13 @@ public class ViewPatient extends AppCompatActivity {
             }
         });
 
-        fb_temp = fb_ref.child(patient_name).child("TEMP");
-        temp_listener = fb_temp.addValueEventListener(new ValueEventListener() {
+        //Resp Rate
+        fb_rr = fb_ref.child(patient_id).child("RR");
+        rr_listener = fb_rr.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String value = dataSnapshot.getValue(String.class);
-                Temp.setText(value);
+                RR.setText(value);
             }
 
             @Override
@@ -114,7 +129,31 @@ public class ViewPatient extends AppCompatActivity {
             }
         });
 
-        fb_z_axis = fb_ref.child(patient_name).child("Z-AXIS");
+        fb_x_axis = fb_ref.child(patient_id).child("X-AXIS");
+        x_axis_listener = fb_x_axis.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String value = dataSnapshot.getValue(String.class);
+                x_axis.setText(value);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) { }
+        });
+
+        fb_y_axis = fb_ref.child(patient_id).child("Y-AXIS");
+        y_axis_listener = fb_y_axis.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String value = dataSnapshot.getValue(String.class);
+                y_axis.setText(value);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) { }
+        });
+
+        fb_z_axis = fb_ref.child(patient_id).child("Z-AXIS");
         z_axis_listener = fb_z_axis.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -123,20 +162,21 @@ public class ViewPatient extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
-            }
+            public void onCancelled(FirebaseError firebaseError) { }
         });
 
-        fb_crit = fb_ref.child(patient_name).child("CRITICAL");
+        fb_crit = fb_ref.child(patient_id).child("CRITICAL");
         crit_listener = fb_crit.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String value = dataSnapshot.getValue(String.class);
                 Critical.setText(value);
                 if (value!=null) {
-                    if (value.equals("Yes")) { //TODO null pointer here
+                    if (value.equals("Yes")) { // null pointer here if value == null
                         Critical.setTextColor(Color.parseColor("#f2181b"));
-                        //SendNotification(patient_name);
+                        if (MainActivity.EMERGENCY_NOTIFICATION_ENABLE == 1) {
+                            SendNotification(patient_name);
+                        }
                     } else {
                         Critical.setTextColor(Color.parseColor("#04ea00"));
                     }
@@ -144,8 +184,7 @@ public class ViewPatient extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
-            }
+            public void onCancelled(FirebaseError firebaseError) {  }
         });
 
     }
@@ -187,9 +226,14 @@ public class ViewPatient extends AppCompatActivity {
         //fb_ref.goOffline();
 
         if (ref_listener!=null) fb_ref.removeEventListener(ref_listener);
-        if (crit_listener!=null) fb_crit.removeEventListener(crit_listener);
+//        if ((MainActivity.EMERGENCY_NOTIFICATION_ENABLE == 0) &&
+//                (crit_listener!=null)) {
+//            fb_crit.removeEventListener(crit_listener); // Need to keep this listener ON when Notifications are enabled
+//        }
         if (hr_listener!=null) fb_hr.removeEventListener(hr_listener);
-        if (temp_listener!=null) fb_temp.removeEventListener(temp_listener);
+        if (rr_listener!=null) fb_rr.removeEventListener(rr_listener);
+        if (x_axis_listener!=null) fb_x_axis.removeEventListener(x_axis_listener);
+        if (y_axis_listener!=null) fb_y_axis.removeEventListener(y_axis_listener);
         if (z_axis_listener!=null) fb_z_axis.removeEventListener(z_axis_listener);
     }
 

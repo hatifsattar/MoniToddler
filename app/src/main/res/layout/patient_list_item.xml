@@ -60,7 +60,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Heart Rate: 80"
         android:textColor="@color/colorlistFontVitals"
-        android:id="@+id/heartrate"
+        android:id="@+id/x_axis"
         android:layout_alignTop="@+id/ward_id"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
@@ -72,9 +72,9 @@
         android:text="Blood Pressure: 80, 120"
         android:textColor="@color/colorlistFontVitals"
         android:id="@+id/bloodpressure"
-        android:layout_below="@+id/heartrate"
-        android:layout_alignRight="@+id/heartrate"
-        android:layout_alignEnd="@+id/heartrate" />
+        android:layout_below="@+id/x_axis"
+        android:layout_alignRight="@+id/x_axis"
+        android:layout_alignEnd="@+id/x_axis" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -101,7 +101,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Last Update: 22mins ago"
         android:textColor="@color/colorlistFontVitals"
         android:id="@+id/last_updated"

@@ -57,18 +57,18 @@ public class CustomListAdapter  extends ArrayAdapter<PatientInfo> {
         TextView ward = (TextView) convertView.findViewById(R.id.ward_id);
         TextView doctor = (TextView) convertView.findViewById(R.id.doctor_name);
         TextView case_name = (TextView) convertView.findViewById(R.id.case_name);
-        TextView hr = (TextView) convertView.findViewById(R.id.heartrate);
+        TextView hr = (TextView) convertView.findViewById(R.id.x_axis);
         TextView bp = (TextView) convertView.findViewById(R.id.bloodpressure);
         TextView sat = (TextView) convertView.findViewById(R.id.saturation);
         TextView temp = (TextView) convertView.findViewById(R.id.temperature);
         TextView last_update = (TextView) convertView.findViewById(R.id.last_updated);
         if (contactInfo != null) {
             name.setText(contactInfo.getName());
-            ward.setText("Ward ID: " + contactInfo.getWardId());
+            ward.setText("Age: " + contactInfo.getAge());
             doctor.setText("Dr. " + contactInfo.getDoctor());
             case_name.setText("HFN# " + contactInfo.getCase());
             hr.setText("Heart Rate: " + contactInfo.getHeartRate());
-            bp.setText("Blood Pressure: " + contactInfo.getBloodPressure());
+//            bp.setText("Blood Pressure: " + contactInfo.getBloodPressure());
             bp.setVisibility(View.GONE);
             sat.setText("Resp. Rate: " + contactInfo.getRespRate());
             temp.setText("Temp.: " + contactInfo.getTemperature());
@@ -77,7 +77,6 @@ public class CustomListAdapter  extends ArrayAdapter<PatientInfo> {
             if (value!=null) {
                 if (value.equals("Yes")) {
                     last_update.setTextColor(Color.parseColor("#f2181b"));
-                    //SendNotification(patient_name);
                 } else {
                     last_update.setTextColor(Color.parseColor("#04ea00"));
                 }

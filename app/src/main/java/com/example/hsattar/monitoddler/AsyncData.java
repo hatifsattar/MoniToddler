@@ -22,6 +22,10 @@ public class AsyncData extends AsyncTask<String, Void, String> {
     //private static float[] accFloatArray = {0,0,0,0,0,0,0}; // Current Reading doesnt need to be saved
     private static float[] prevAccFloatArray = {0,0,0,0,0,0,0}; //Previous reading
     private float[] deltaPercent = {0,0,0,0,0,0,0};
+    //private float[] delta = {0,0,0,0,0,0,0};
+    //private float[] deltaCounter = {0,0,0,0,0,0,0};
+    private float delta = 0;
+    private float deltaCounter = 0;
 
     // Low Pass Filter
     private static double alpha = 0.5;
@@ -51,32 +55,32 @@ public class AsyncData extends AsyncTask<String, Void, String> {
         TextView accZ = (TextView) rootView.findViewById(R.id.accZ);
         TextView HRText = (TextView) rootView.findViewById(R.id.heartrateText);
         accX.setText("X: " + prevAccFloatArray[3] + "\ngyroX: " + prevAccFloatArray[0]
-                +"\nAccDeltaX: " + deltaPercent[3]);
+                + "\nAccDeltaX: " + deltaPercent[3]);
         accY.setText("Y: " + prevAccFloatArray[4] + "\ngyroY: " + prevAccFloatArray[1]
-                +"\nAccDeltaY: " + deltaPercent[4]);
+                + "\nAccDeltaY: " + deltaPercent[4]);
         accZ.setText("Z: " + prevAccFloatArray[5] + "\ngyroZ: " + prevAccFloatArray[2]
-                +"\nAccDeltaZ: " + deltaPercent[5]);
+                + "\nAccDeltaZ: " + deltaPercent[5]);
         if (hrData != null)
             HRText.setText("HR " + hrData.getHeartrate() + "\n AvgHR " + hrData.getAvgHeartrate());
 
-        if (SensorTagActivity.isLogging){
+        if (SensorTagActivity.isLogging) {
             SensorTagActivityFragment.loggingText +=
-                    "\n" + " X: " + prevAccFloatArray[3] +
-                           " Y: " + prevAccFloatArray[4] +
-                           " Z: " + prevAccFloatArray[5] +
-                            " gyroX: " + prevAccFloatArray[0] +
-                            " gyroY: " + prevAccFloatArray[1] +
-                            " gyroZ: " + prevAccFloatArray[2] +
-                            " AccDeltaX: " + deltaPercent[3] +
-                            " AccDeltaY: " + deltaPercent[4] +
-                            " AccDeltaZ: " + deltaPercent[5];
+                    "\n" + " X," + prevAccFloatArray[3] +
+                            ",Y," + prevAccFloatArray[4] +
+                            ",Z," + prevAccFloatArray[5] +
+                            ",gyroX," + prevAccFloatArray[0] +
+                            ",gyroY," + prevAccFloatArray[1] +
+                            ",gyroZ," + prevAccFloatArray[2] +
+                            ",AccDeltaX," + deltaPercent[3] +
+                            ",AccDeltaY," + deltaPercent[4] +
+                            ",AccDeltaZ," + deltaPercent[5];
 
 
-            if (SensorTagActivityFragment.loggingText.length() > 150){
+            if (SensorTagActivityFragment.loggingText.length() > 150) {
                 //add to file
                 try {
                     SensorTagActivity.LogWriter.append(SensorTagActivityFragment.loggingText);
-                }catch (Exception e) {
+                } catch (Exception e) {
                     SensorTagActivityFragment.loggingText = "";
                 }
                 //clean up logging string
@@ -86,24 +90,50 @@ public class AsyncData extends AsyncTask<String, Void, String> {
         //Firebase fb = MainActivity.ref.child("MT").child("patientX");
         Firebase fb = SensorTagActivity.fb_ref.child(SensorTagActivity.patient_id);
 
-        fb.child("HR").setValue(String.format("%.5f",prevAccFloatArray[0]));
-        fb.child("TEMP").setValue(String.format("%.5f",prevAccFloatArray[1]));
+        if (hrData != null) {
+            //Write heart rate after cutting it to 5 significant numbers
+            String hr = hrData.getAvgHeartrate().toString();
+            int max_length = (hr.length() < 5)? hr.length():5;
+            String hr_cut = hr.substring(0, max_length);
+            fb.child("HR").setValue(hr_cut);
+        }
+        fb.child("X-AXIS").setValue(String.format("%.5f",prevAccFloatArray[0]));
+        fb.child("Y-AXIS").setValue(String.format("%.5f",prevAccFloatArray[1]));
         fb.child("Z-AXIS").setValue(String.format("%.5f",prevAccFloatArray[2]));
 
+        fb.child("RR").setValue(String.format("%.5f",deltaPercent[3])); // FIXME: 3/11/2016
 
         MainActivity.sampling_counter++;
+        if (Math.abs(delta) >= 0.017) {
+            deltaCounter++;
+        }
 
-        if (MainActivity.sampling_counter == 50) {//20
+//        if (MainActivity.sampling_counter == 50) {//20
+//            MainActivity.sampling_counter = 0;
+//            //xaxis acc only! TODO add all three
+//            float delta0 = deltaPercent[0]*20;//8
+//            float delta1 = deltaPercent[1]*20;//8
+//            float delta2 = deltaPercent[2]*20;//8
+//            if ((delta0 < 2) ||
+//                    (delta1 < 2) ||
+//                    (delta2 < 2))
+//            { // Crude detection
+//                fb.child("CRITICAL").setValue("Yes");
+//            } else {
+//                fb.child("CRITICAL").setValue("No");
+//            }
+//            float absolute_delta = (float) Math.sqrt(delta0*delta0 + delta1*delta1 + delta2*delta2);
+//            fb.child("DELTA").setValue(String.format("%.5f",absolute_delta));
+//        }
+        if (MainActivity.sampling_counter == 36) { // Sensortag takes 6 readings/sec so this is about 6 secs of time
             MainActivity.sampling_counter = 0;
-            //xaxis acc only! TODO add all three
-            float delta = deltaPercent[3]*20;//8
-            if (delta < 2) { // Crude detection
-                fb.child("CRITICAL").setValue("Yes");
-                //fb.child("DELTA").setValue(delta);
-            } else {
+            if (deltaCounter > 0){
                 fb.child("CRITICAL").setValue("No");
+            } else {
+                fb.child("CRITICAL").setValue("Yes");
             }
-            fb.child("DELTA").setValue(delta);
+            deltaCounter = 0;
+
         }
 
     }
@@ -134,6 +164,13 @@ public class AsyncData extends AsyncTask<String, Void, String> {
             sensortagValsFiltered[i] = lowPassFilter(sensortagVals[i], prevAccFloatArray[i]);
             // Using Filtered previous value
             deltaPercent[i] = (sensortagValsFiltered[i] - prevAccFloatArray[i])/prevAccFloatArray[i];
+            if (i == 3) { //do it just for X right now
+                if (sensortagValsFiltered[i] >= prevAccFloatArray[i]) {
+                    delta += sensortagValsFiltered[i];
+                } else {
+                    delta = 0;
+                }
+            }
             //deltaPercent = (sensortagVals[3] - sensortagValsFiltered[3])/sensortagValsFiltered[3];
             //deltaPercent[i] += Math.abs(deltaPercent[i]);
         }

@@ -100,7 +100,7 @@ public class AsyncData extends AsyncTask<String, Void, String> {
             fb.child("HR").setValue(hr_cut);
 
             //Determining Critical
-            String hr = hr_cut.substring(0, 3);
+            String hr = hr_cut.substring(0, 2);
             int hr_num = Integer.parseInt(hr);
             if ((hr_num > 85) || (hr_num < 60)){
                 hr_critical = true;

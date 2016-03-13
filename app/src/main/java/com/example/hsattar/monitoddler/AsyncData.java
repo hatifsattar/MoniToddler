@@ -59,8 +59,10 @@ public class AsyncData extends AsyncTask<String, Void, String> {
         TextView HRText = (TextView) rootView.findViewById(R.id.heartrateText);
         accX.setText("X: " + prevAccFloatArray[3] + "\ngyroX: " + prevAccFloatArray[0]
                 + "\nAccDeltaX: " + deltaPercent[3]);
+
         accY.setText("Y: " + prevAccFloatArray[4] + "\ngyroY: " + prevAccFloatArray[1]
                 + "\nAccDeltaY: " + deltaPercent[4]);
+
         accZ.setText("Z: " + prevAccFloatArray[5] + "\ngyroZ: " + prevAccFloatArray[2]
                 + "\nAccDeltaZ: " + deltaPercent[5]);
         if (hrData != null)

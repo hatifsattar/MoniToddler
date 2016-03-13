@@ -100,8 +100,9 @@ public class AsyncData extends AsyncTask<String, Void, String> {
             fb.child("HR").setValue(hr_cut);
 
             //Determining Critical
-            String hr = hr_cut.substring(0, 2);
-            int hr_num = Integer.parseInt(hr);
+            String[] split_str = hr_cut.split("/");
+            //String hr = hr_cut.substring(0, 2);
+            float hr_num = Float.parseFloat(split_str[0]);
             if ((hr_num > 85) || (hr_num < 60)){
                 hr_critical = true;
             } else {
@@ -111,7 +112,6 @@ public class AsyncData extends AsyncTask<String, Void, String> {
         fb.child("X-AXIS").setValue(String.format("%.5f",prevAccFloatArray[0]));
         fb.child("Y-AXIS").setValue(String.format("%.5f",prevAccFloatArray[1]));
         fb.child("Z-AXIS").setValue(String.format("%.5f",prevAccFloatArray[2]));
-
 
 //        MainActivity.sampling_counter++;
 //        if (MainActivity.sampling_counter == 50) {//20
@@ -146,7 +146,9 @@ public class AsyncData extends AsyncTask<String, Void, String> {
             }
 
             int resp_rate = peakCounter * 10; // 6*10 = 1 min
-            fb.child("RR").setValue(String.format("%.5f",resp_rate));
+            fb.child("RR").setValue(resp_rate);//(String.format("%.5f",resp_rate));
+
+            //reset counters
             peakCounter = 0;
             MainActivity.sampling_counter = 0;
         }

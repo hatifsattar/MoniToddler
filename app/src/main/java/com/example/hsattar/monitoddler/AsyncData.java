@@ -100,6 +100,7 @@ public class AsyncData extends AsyncTask<String, Void, String> {
             fb.child("HR").setValue(hr_cut);
 
             //Determining Critical
+            //Obtain the number only
             String[] split_str = hr_cut.split("/");
             //String hr = hr_cut.substring(0, 2);
             float hr_num = Float.parseFloat(split_str[0]);
@@ -116,7 +117,7 @@ public class AsyncData extends AsyncTask<String, Void, String> {
 //        MainActivity.sampling_counter++;
 //        if (MainActivity.sampling_counter == 50) {//20
 //            MainActivity.sampling_counter = 0;
-//            //xaxis acc only! TODO add all three
+//            //xaxis acc only! TO DO add all three
 //            float delta0 = deltaPercent[0]*20;//8
 //            float delta1 = deltaPercent[1]*20;//8
 //            float delta2 = deltaPercent[2]*20;//8

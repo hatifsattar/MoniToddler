@@ -195,7 +195,7 @@ public class ViewPatient extends AppCompatActivity {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.monitoddler_icon)
+                        .setSmallIcon(R.drawable.mt_icon_round)
                         .setContentTitle(title)
                         .setContentText(msg);
 

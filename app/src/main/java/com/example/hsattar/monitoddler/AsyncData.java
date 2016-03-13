@@ -25,7 +25,10 @@ public class AsyncData extends AsyncTask<String, Void, String> {
     //private float[] delta = {0,0,0,0,0,0,0};
     //private float[] deltaCounter = {0,0,0,0,0,0,0};
     private float delta = 0;
-    private float deltaCounter = 0;
+    private int peakCounter = 0;
+
+    private static boolean hr_critical = false;
+    private static boolean rr_critical = false;
 
     // Low Pass Filter
     private static double alpha = 0.5;
@@ -92,21 +95,25 @@ public class AsyncData extends AsyncTask<String, Void, String> {
 
         if (hrData != null) {
             //Write heart rate after cutting it to 5 significant numbers
-            String hr = hrData.getHeartrate().toString();
-            String hr_cut = hr.substring(10, hr.length());
+            String hr_string = hrData.getHeartrate().toString();
+            String hr_cut = hr_string.substring(10, hr_string.length());
             fb.child("HR").setValue(hr_cut);
+
+            //Determining Critical
+            String hr = hr_cut.substring(0, 3);
+            int hr_num = Integer.parseInt(hr);
+            if ((hr_num > 85) || (hr_num < 60)){
+                hr_critical = true;
+            } else {
+                hr_critical = false;
+            }
         }
         fb.child("X-AXIS").setValue(String.format("%.5f",prevAccFloatArray[0]));
         fb.child("Y-AXIS").setValue(String.format("%.5f",prevAccFloatArray[1]));
         fb.child("Z-AXIS").setValue(String.format("%.5f",prevAccFloatArray[2]));
 
-        fb.child("RR").setValue(String.format("%.5f",deltaPercent[3])); // FIXME: 3/11/2016
 
-        MainActivity.sampling_counter++;
-        if (Math.abs(delta) >= 0.017) {
-            deltaCounter++;
-        }
-
+//        MainActivity.sampling_counter++;
 //        if (MainActivity.sampling_counter == 50) {//20
 //            MainActivity.sampling_counter = 0;
 //            //xaxis acc only! TODO add all three
@@ -124,16 +131,33 @@ public class AsyncData extends AsyncTask<String, Void, String> {
 //            float absolute_delta = (float) Math.sqrt(delta0*delta0 + delta1*delta1 + delta2*delta2);
 //            fb.child("DELTA").setValue(String.format("%.5f",absolute_delta));
 //        }
-        if (MainActivity.sampling_counter == 36) { // Sensortag takes 6 readings/sec so this is about 6 secs of time
-            MainActivity.sampling_counter = 0;
-            if (deltaCounter > 0){
-                fb.child("CRITICAL").setValue("No");
-            } else {
-                fb.child("CRITICAL").setValue("Yes");
-            }
-            deltaCounter = 0;
 
+        MainActivity.sampling_counter++;
+        if (Math.abs(delta) >= 0.017) {
+            peakCounter++;
         }
+
+        // Sensortag takes ~6 readings/sec so this (36) is about 6 secs of time
+        if (MainActivity.sampling_counter == 36) {
+            if (peakCounter > 0){
+                rr_critical = false;
+            } else {
+                rr_critical = true;
+            }
+
+            int resp_rate = peakCounter * 10; // 6*10 = 1 min
+            fb.child("RR").setValue(String.format("%.5f",resp_rate));
+            peakCounter = 0;
+            MainActivity.sampling_counter = 0;
+        }
+
+        if (rr_critical || hr_critical){
+            fb.child("CRITICAL").setValue("Yes");
+        } else {
+            fb.child("CRITICAL").setValue("No");
+        }
+        rr_critical = false;
+        hr_critical = false;
 
     }
 

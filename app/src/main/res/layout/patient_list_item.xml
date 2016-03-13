@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:textSize="30dp"
+        android:textSize="25dp"
         android:textColor="@color/colorlistFontName"
         android:text="Patient Name"
         android:id="@+id/patient_name"

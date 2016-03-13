@@ -71,7 +71,7 @@ public class CustomListAdapter  extends ArrayAdapter<PatientInfo> {
 //            bp.setText("Blood Pressure: " + contactInfo.getBloodPressure());
             bp.setVisibility(View.GONE);
             sat.setText("Resp. Rate: " + contactInfo.getRespRate());
-            temp.setText("Temp.: " + contactInfo.getTemperature());
+            temp.setText("-");//temp.setText("Temp.: " + contactInfo.getTemperature());
             String value = contactInfo.getCritical();
             last_update.setText("Critical: " + value);
             if (value!=null) {

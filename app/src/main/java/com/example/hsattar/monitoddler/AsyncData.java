@@ -95,6 +95,8 @@ public class AsyncData extends AsyncTask<String, Void, String> {
         //Firebase fb = MainActivity.ref.child("MT").child("patientX");
         Firebase fb = SensorTagActivity.fb_ref.child(SensorTagActivity.patient_id);
 
+        hr_critical = false;
+
         if (hrData != null) {
             //Write heart rate after cutting it to 5 significant numbers
             String hr_string = hrData.getHeartrate().toString();
@@ -112,9 +114,10 @@ public class AsyncData extends AsyncTask<String, Void, String> {
                 hr_critical = false;
             }
         }
-        fb.child("X-AXIS").setValue(String.format("%.5f",prevAccFloatArray[0]));
-        fb.child("Y-AXIS").setValue(String.format("%.5f",prevAccFloatArray[1]));
-        fb.child("Z-AXIS").setValue(String.format("%.5f",prevAccFloatArray[2]));
+        fb.child("X-AXIS").setValue(String.format("%.5f",prevAccFloatArray[3]));
+        fb.child("Y-AXIS").setValue(String.format("%.5f",prevAccFloatArray[4]));
+        fb.child("Z-AXIS").setValue(String.format("%.5f",delta));
+        //fb.child("Z-AXIS").setValue(String.format("%.5f",prevAccFloatArray[5]));
 
 //        MainActivity.sampling_counter++;
 //        if (MainActivity.sampling_counter == 50) {//20
@@ -143,10 +146,18 @@ public class AsyncData extends AsyncTask<String, Void, String> {
         // Sensortag takes ~6 readings/sec so this (36) is about 6 secs of time
         if (MainActivity.sampling_counter == 36) {
             if (peakCounter > 0){
+                fb.child("CRITICAL").setValue("No");
                 rr_critical = false;
             } else {
+                fb.child("CRITICAL").setValue("Yes");
                 rr_critical = true;
             }
+
+//            if (rr_critical || hr_critical){
+//                fb.child("CRITICAL").setValue("Yes");
+//            } else {
+//                fb.child("CRITICAL").setValue("No");
+//            }
 
             int resp_rate = peakCounter * 10; // 6*10 = 1 min
             fb.child("RR").setValue(resp_rate);//(String.format("%.5f",resp_rate));
@@ -156,11 +167,8 @@ public class AsyncData extends AsyncTask<String, Void, String> {
             MainActivity.sampling_counter = 0;
         }
 
-        if (rr_critical || hr_critical){
-            fb.child("CRITICAL").setValue("Yes");
-        } else {
-            fb.child("CRITICAL").setValue("No");
-        }
+
+
         rr_critical = false;
         hr_critical = false;
 

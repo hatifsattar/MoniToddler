@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/colorAddBackground"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.hsattar.monitoddler.UpdateParams"
+    tools:showIn="@layout/activity_update_params">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/lowerHR"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:hint="HeartRate: Lower Limit" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/upperHR"
+        android:layout_below="@+id/lowerHR"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:hint="HeartRate: Upper Limit" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/deltaRR"
+        android:layout_below="@+id/upperHR"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:hint="RespRate: Delta" />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/lowerRR"
+        android:layout_below="@+id/deltaRR"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:hint="RespRate: lower Limit" />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/upperRR"
+        android:layout_below="@+id/lowerRR"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:hint="RespRate: Upper Limit" />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_weight="1"
+        android:text="Save Params"
+        android:layout_height="80dp"
+        android:background="@drawable/buttonshape"
+        android:textColor="@color/colorMainButtonText"
+        android:textSize="25sp"
+        android:id="@+id/buttonSave"
+        android:layout_marginBottom="90dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>

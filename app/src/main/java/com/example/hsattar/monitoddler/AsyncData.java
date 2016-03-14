@@ -24,8 +24,10 @@ public class AsyncData extends AsyncTask<String, Void, String> {
     private float[] deltaPercent = {0,0,0,0,0,0,0};
     //private float[] delta = {0,0,0,0,0,0,0};
     //private float[] deltaCounter = {0,0,0,0,0,0,0};
-    private float delta = 0;
-    private int peakCounter = 0;
+    private static float delta = 0;
+    private static int peakCounter = 0;
+    public static long sampling_counter = 0;
+    public static long currentTime = 0;
 
     private static boolean hr_critical = false;
     private static boolean rr_critical = false;
@@ -44,6 +46,7 @@ public class AsyncData extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... params) {
+        currentTime = System.currentTimeMillis();
         if (byteArray != null) {
             prevAccFloatArray = convertAcc(byteArray);
         }
@@ -66,7 +69,10 @@ public class AsyncData extends AsyncTask<String, Void, String> {
         accZ.setText("Z: " + prevAccFloatArray[5] + "\ngyroZ: " + prevAccFloatArray[2]
                 + "\nAccDeltaZ: " + deltaPercent[5]);
         if (hrData != null)
-            HRText.setText("HR " + hrData.getHeartrate() + "\n AvgHR " + hrData.getAvgHeartrate());
+            HRText.setText("HR " + hrData.getHeartrate() + "\n AvgHR " + hrData.getAvgHeartrate()
+                + "Peaks " + peakCounter + " delta " + delta);
+        else
+            HRText.setText("Peaks " + peakCounter + " delta " + delta);
 
         if (SensorTagActivity.isLogging) {
             SensorTagActivityFragment.loggingText +=
@@ -108,7 +114,7 @@ public class AsyncData extends AsyncTask<String, Void, String> {
             String[] split_str = hr_cut.split("/");
             //String hr = hr_cut.substring(0, 2);
             float hr_num = Float.parseFloat(split_str[0]);
-            if ((hr_num > 85) || (hr_num < 60)){
+            if ((hr_num > 100) || (hr_num < 60)){
                 hr_critical = true;
             } else {
                 hr_critical = false;
@@ -116,35 +122,22 @@ public class AsyncData extends AsyncTask<String, Void, String> {
         }
         fb.child("X-AXIS").setValue(String.format("%.5f",prevAccFloatArray[3]));
         fb.child("Y-AXIS").setValue(String.format("%.5f",prevAccFloatArray[4]));
-        fb.child("Z-AXIS").setValue(String.format("%.5f",delta));
-        //fb.child("Z-AXIS").setValue(String.format("%.5f",prevAccFloatArray[5]));
+        fb.child("Z-AXIS").setValue(String.format("%.5f",prevAccFloatArray[5]));
 
-//        MainActivity.sampling_counter++;
-//        if (MainActivity.sampling_counter == 50) {//20
-//            MainActivity.sampling_counter = 0;
-//            //xaxis acc only! TO DO add all three
-//            float delta0 = deltaPercent[0]*20;//8
-//            float delta1 = deltaPercent[1]*20;//8
-//            float delta2 = deltaPercent[2]*20;//8
-//            if ((delta0 < 2) ||
-//                    (delta1 < 2) ||
-//                    (delta2 < 2))
-//            { // Crude detection
-//                fb.child("CRITICAL").setValue("Yes");
-//            } else {
-//                fb.child("CRITICAL").setValue("No");
-//            }
-//            float absolute_delta = (float) Math.sqrt(delta0*delta0 + delta1*delta1 + delta2*delta2);
-//            fb.child("DELTA").setValue(String.format("%.5f",absolute_delta));
-//        }
-
-        MainActivity.sampling_counter++;
-        if (Math.abs(delta) >= 0.017) {
+        if (Math.abs(delta) >= 0.08) {
             peakCounter++;
+            //reset the delta so the patient has to breathe again
+            delta = 0;
         }
 
         // Sensortag takes ~6 readings/sec so this (36) is about 6 secs of time
-        if (MainActivity.sampling_counter == 36) {
+
+        /*if (this.sampling_counter < currentTime) {
+            this.sampling_counter = currentTime;
+            peakCounter = 0;
+        }*/
+
+        if (currentTime >= this.sampling_counter + 10000 ) {
             if (peakCounter > 0){
                 fb.child("CRITICAL").setValue("No");
                 rr_critical = false;
@@ -152,6 +145,9 @@ public class AsyncData extends AsyncTask<String, Void, String> {
                 fb.child("CRITICAL").setValue("Yes");
                 rr_critical = true;
             }
+            this.sampling_counter = currentTime;
+            peakCounter = 0;
+        }
 
 //            if (rr_critical || hr_critical){
 //                fb.child("CRITICAL").setValue("Yes");
@@ -159,19 +155,12 @@ public class AsyncData extends AsyncTask<String, Void, String> {
 //                fb.child("CRITICAL").setValue("No");
 //            }
 
-            int resp_rate = peakCounter * 10; // 6*10 = 1 min
-            fb.child("RR").setValue(resp_rate);//(String.format("%.5f",resp_rate));
+        //send resp rate to firebase server
+        //int resp_rate = peakCounter * 6;
+        fb.child("RR").setValue(peakCounter);
 
-            //reset counters
-            peakCounter = 0;
-            MainActivity.sampling_counter = 0;
-        }
-
-
-
-        rr_critical = false;
+        //rr_critical = false;
         hr_critical = false;
-
     }
 
     public float[] convertAcc(final byte[] value) {
@@ -200,9 +189,9 @@ public class AsyncData extends AsyncTask<String, Void, String> {
             sensortagValsFiltered[i] = lowPassFilter(sensortagVals[i], prevAccFloatArray[i]);
             // Using Filtered previous value
             deltaPercent[i] = (sensortagValsFiltered[i] - prevAccFloatArray[i])/prevAccFloatArray[i];
-            if (i == 3) { //do it just for X right now
+            if (i == 5) { //z if standing/sitting, x if lying down
                 if (sensortagValsFiltered[i] >= prevAccFloatArray[i]) {
-                    delta += sensortagValsFiltered[i];
+                    delta = delta + (sensortagValsFiltered[i] - prevAccFloatArray[i]);
                 } else {
                     delta = 0;
                 }

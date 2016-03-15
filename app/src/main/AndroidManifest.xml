@@ -20,6 +20,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,21 +32,38 @@
         <service
             android:name=".HardwareConnectorService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
 
-        <activity android:name=".ViewPatient" />
-        <activity android:name=".UploadVitals" />
-        <activity android:name=".SensorTagActivity" />
-        <activity android:name=".AddPatient" />
-        <activity android:name=".NotificationClass" />
+        <activity
+            android:name=".ViewPatient"
+            android:label="Patient Details"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UploadVitals"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SensorTagActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AddPatient"
+            android:label="Add New Patient"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".NotificationClass"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ViewPatientsList"
             android:label="@string/title_activity_view_patients_list"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".UpdateParams"
             android:label="@string/title_activity_update_params"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AddExtraVitals"
+            android:label="Additional Vitals"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

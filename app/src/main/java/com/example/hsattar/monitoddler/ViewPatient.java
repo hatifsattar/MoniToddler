@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
@@ -49,6 +51,8 @@ public class ViewPatient extends AppCompatActivity {
     public TextView z_axis;
     public TextView Critical;
 
+    public Button add_vitals;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,9 +77,22 @@ public class ViewPatient extends AppCompatActivity {
         y_axis = (TextView) findViewById(R.id.temp);
         z_axis = (TextView) findViewById(R.id.z_axis);
         Critical = (TextView) findViewById(R.id.critical);
+        add_vitals = (Button) findViewById(R.id.buttonAddVitals);
+        add_vitals.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                add_vitals_activity();
+            }
+        });
 
         firebase_setup();
 
+    }
+
+    private void add_vitals_activity() {
+        Intent myIntent = new Intent(this, AddExtraVitals.class);
+        myIntent.putExtra("NAME", patient_name);
+        myIntent.putExtra("ID", patient_id);
+        startActivity(myIntent);
     }
 
     private void firebase_setup() {

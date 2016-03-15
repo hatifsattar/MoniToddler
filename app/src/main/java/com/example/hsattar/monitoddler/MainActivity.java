@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -54,6 +55,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+//        ActionBar actionBar = getSupportActionBar();
+//        if (actionBar!= null){
+//            actionBar.setLogo(R.drawable.mt_icon_round_2);
+//            actionBar.setDisplayUseLogoEnabled(true);
+//            actionBar.setDisplayShowHomeEnabled(true);
+//        }
         
         checkPermissions();
 
@@ -172,8 +179,17 @@ public class MainActivity extends AppCompatActivity {
             }
             return true;
         }
+        else if (id == R.id.action_settings_2) {
+            update_params_activity();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void update_params_activity() {
+        Intent myIntent = new Intent(this, UpdateParams.class);
+        startActivity(myIntent);
     }
 
     @Override

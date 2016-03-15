@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="@color/colorAddBackground"
+    android:background="@color/colorMainBackground"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.hsattar.monitoddler.AddPatient">
 
@@ -19,7 +19,9 @@
         android:id="@+id/patientName"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textColorHint="@color/colorlistFontDescHint"
+        android:textColor="@color/colorlistFontDesc"/>
 
     <EditText
         android:layout_width="match_parent"
@@ -29,7 +31,9 @@
         android:inputType="number"
         android:layout_below="@+id/patientName"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textColorHint="@color/colorlistFontDescHint"
+        android:textColor="@color/colorlistFontDesc" />
 
     <EditText
         android:layout_width="match_parent"
@@ -38,7 +42,9 @@
         android:id="@+id/doctorName"
         android:layout_below="@+id/patientAge"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textColorHint="@color/colorlistFontDescHint"
+        android:textColor="@color/colorlistFontDesc"/>
 
     <EditText
         android:layout_width="match_parent"
@@ -48,7 +54,9 @@
         android:id="@+id/patientHFN"
         android:layout_below="@+id/doctorName"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textColorHint="@color/colorlistFontDescHint"
+        android:textColor="@color/colorlistFontDesc" />
 
     <Button
         android:layout_width="match_parent"

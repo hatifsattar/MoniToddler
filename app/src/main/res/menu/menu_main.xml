@@ -4,7 +4,12 @@
     tools:context="com.example.hsattar.monitoddler.MainActivity">
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:orderInCategory="99"
         android:title="Enable Notification"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_settings_2"
+        android:orderInCategory="100"
+        android:title="Update Parameters"
         app:showAsAction="never" />
 </menu>

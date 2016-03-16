@@ -135,12 +135,16 @@ public class AddPatient extends AppCompatActivity {
         child_ref.child("Y-AXIS").setValue("-");//8
         child_ref.child("Z-AXIS").setValue("-");//9
         child_ref.child("RR").setValue("-");//10
+
         child_ref.child("DELTA").setValue("-");//11
+        child_ref.child("SAT").setValue("-");//12
+        child_ref.child("BP").setValue("-");//13
+        child_ref.child("NOTE").setValue("-");//14
 
         //------------------------
         //----- IMPORTANT !!! ----
         //------------------------
-        MainActivity.databse_fields_count = 11; // MAKE SURE this counter corresponds to the number of Fields set to database above
+        MainActivity.databse_fields_count = 14; // MAKE SURE this counter corresponds to the number of Fields set to database above
 
         PATIENT_NAME = Name;
         PATIENT_ID = Id;

@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static int EMERGENCY_NOTIFICATION_ENABLE;
 
-    public static int databse_fields_count = 11; //IMPORTANT - Update this when increasing number of upload fields
+    public static int databse_fields_count = 14; //IMPORTANT - Update this when increasing number of upload fields
 
     public static final String FIREBASE_URL = "https://crackling-torch-1983.firebaseio.com/";
 
@@ -195,8 +195,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Toast.makeText(this, "Exiting MoniToddler - Disabling Notifications", Toast.LENGTH_SHORT).show();
-        EMERGENCY_NOTIFICATION_ENABLE = 0;
+        if (EMERGENCY_NOTIFICATION_ENABLE == 1) {
+            Toast.makeText(this, "Exiting MoniToddler - Disabling Notifications", Toast.LENGTH_SHORT).show();
+            EMERGENCY_NOTIFICATION_ENABLE = 0;
+        }
     }
 
     @Override

@@ -12,6 +12,12 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.hsattar.monitoddler.ViewPatient">
 
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -113,7 +119,7 @@
             android:text="Patient Critical"
             android:textColor="@color/colorlistFontVitals"
             android:textSize="17dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="15dp"
             android:layout_below="@+id/textView10"
             android:layout_alignLeft="@+id/textView5"
             android:layout_alignStart="@+id/textView5" />
@@ -134,7 +140,7 @@
             android:id="@+id/tv5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:text="Heart Rate"
             android:textColor="@color/colorlistFontDesc"
             android:textSize="17dp"
@@ -187,18 +193,18 @@
             android:textSize="17sp"
             android:layout_alignEnd="@+id/critical"
             android:layout_alignRight="@+id/critical"
-            android:layout_below="@+id/critical"
-            android:layout_marginTop="20dp"
-            android:text="Add Vitals"
-            android:paddingLeft="25dp"
-            android:paddingRight="25dp" />
+            android:layout_below="@+id/note"
+            android:layout_marginTop="10dp"
+            android:text="Add"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp" />
 
         <TextView
             android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Additional Vitals:"
-            android:textColor="#ffffff"
+            android:text="Additional Vitals/Note:"
+            android:textColor="@color/colorlistFontName"
             android:textSize="17dp"
             android:layout_alignTop="@+id/buttonAddVitals"
             android:layout_alignLeft="@+id/textView10"
@@ -214,13 +220,13 @@
             android:layout_below="@+id/tv5"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="15dp" />
+            android:layout_marginTop="10dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="-"
-            android:id="@+id/textView7"
+            android:id="@+id/temperature"
             android:layout_alignTop="@+id/textView6"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
@@ -236,7 +242,7 @@
             android:layout_below="@+id/textView6"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:textColor="@color/colorlistFontDesc"
             android:textSize="17dp" />
 
@@ -244,7 +250,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="-"
-            android:id="@+id/textView9"
+            android:id="@+id/bloodpressure"
             android:layout_alignTop="@+id/textView8"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
@@ -260,7 +266,7 @@
             android:layout_below="@+id/textView8"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:textColor="@color/colorlistFontDesc"
             android:textSize="17dp" />
 
@@ -268,7 +274,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="-"
-            android:id="@+id/textView11"
+            android:id="@+id/saturation"
             android:layout_alignTop="@+id/textView10"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
@@ -276,6 +282,19 @@
             android:textStyle="bold"
             android:textColor="@color/colorlistFontDesc" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Note: \nSample Note"
+            android:id="@+id/note"
+            android:layout_below="@+id/textView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/colorlistFontName"
+            android:textSize="15dp" />
+
     </RelativeLayout>
+    </ScrollView>
 
 </RelativeLayout>

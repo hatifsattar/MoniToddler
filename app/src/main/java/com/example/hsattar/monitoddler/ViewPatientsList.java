@@ -137,15 +137,7 @@ public class ViewPatientsList extends AppCompatActivity {
     }
 
     private void remove_patient(String id, int position) {
-
         fb_ref.child(id).removeValue();
-
-//        if (position >= infoArrayList.size()) {
-//            Log.d(TAG, " @@@@@@@@@@@@@@@@ ERROR position of element beyond size of infoArrayList! ");
-//        } else {
-//            infoArrayList.remove(position);
-//            updateList();
-//        }
     }
 
     private void getPatientsFromDatabase() {

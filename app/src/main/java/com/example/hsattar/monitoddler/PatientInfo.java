@@ -23,11 +23,16 @@ public class PatientInfo {
     String BloodPressure;
     String RespRate;
 
+
+    String Saturation;
+
     String LastUpdated;
 
     String Critical;
 
-    public PatientInfo(String name, String age, String doctor, String case_num, String critical, String hr, String temp, String rr, String x, String y, String z) {
+    public PatientInfo(String name, String age, String doctor, String case_num, String critical,
+                       String hr, String temp, String rr, String x, String y, String z,
+                       String bp, String sat) {
         Age = age;
         Name = name;
         Doctor = doctor;
@@ -40,9 +45,10 @@ public class PatientInfo {
 //        Parents = "-";
 //        ParentsContact = "-";
 //        Address = "-";
+        Saturation = sat;
         HeartRate = hr;
         Temperature = temp;
-        BloodPressure = "-";
+        BloodPressure = bp;
         RespRate = rr;
         LastUpdated = "-";
     }
@@ -64,7 +70,8 @@ public class PatientInfo {
         LastUpdated = "-";
     }
 
-    public PatientInfo(String name, String age, String doctor, String wardId, String aCase, String parents,  String address) {
+    public PatientInfo(String name, String age, String doctor, String wardId, String aCase,
+                       String parents,  String address) {
 //        Address = address;
         Age = age;
         Case = aCase;
@@ -81,6 +88,15 @@ public class PatientInfo {
         Critical = "-";
 
     }
+
+    public String getSaturation() {
+        return Saturation;
+    }
+
+    public void setSaturation(String saturation) {
+        Saturation = saturation;
+    }
+
     public String getX_axis() {
         return x_axis;
     }

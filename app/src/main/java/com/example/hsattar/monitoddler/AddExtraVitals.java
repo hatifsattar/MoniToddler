@@ -24,6 +24,7 @@ public class AddExtraVitals extends AppCompatActivity {
     private EditText sat;
     private EditText temp;
     private EditText note;
+    private EditText noteAuthor;
     private Button saveVitals;
 
     @Override
@@ -50,6 +51,7 @@ public class AddExtraVitals extends AppCompatActivity {
         sat = (EditText) findViewById(R.id.addSat);
         temp = (EditText) findViewById(R.id.addTemp);
         note = (EditText) findViewById(R.id.addNote);
+        noteAuthor = (EditText) findViewById(R.id.noteAuthor);
         saveVitals = (Button) findViewById(R.id.buttonSaveVitals);
         saveVitals.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -67,6 +69,7 @@ public class AddExtraVitals extends AppCompatActivity {
         String saturation = sat.getText().toString();
         String temperature = temp.getText().toString();
         String note_ = note.getText().toString();
+        String noteAuth_ = noteAuthor.getText().toString();
 
         if (bloodpres!=null){
             if (!bloodpres.matches("") && /* No null accepted*/
@@ -95,7 +98,7 @@ public class AddExtraVitals extends AppCompatActivity {
                 success = 1;
             }
         }
-        if (note_!=null){
+        if ((note_!=null) && (noteAuth_!=null)){
             if (!note_.matches("") &&
                 !note_.matches("[ ]*") &&
                 !note_.matches("[\n]*")  )
@@ -108,8 +111,19 @@ public class AddExtraVitals extends AppCompatActivity {
                     print_message("Please avoid any special characters in your note!");
                     success = 2;
                 }
+                else if ( noteAuth_.matches("") ||
+                          noteAuth_.matches("[ ]*") ||
+                          noteAuth_.matches("[\n]*") ||
+                         !noteAuth_.matches("[a-zA-Z0-9,. ]*"))
+                {
+                    print_message("Please enter a valid name for the Note Author!");
+                    success = 2;
+                }
                 else {
-                    fb_ref.child(patient_id).child("NOTE").setValue(note_);
+                    String name_trim = noteAuth_.trim(); // remove beginning and ending spaces
+                    String note_trim = note_.trim(); // remove beginning and ending spaces
+                    final String NAME = name_trim.substring(0,1).toUpperCase() + name_trim.substring(1); //Capitalize first letter
+                    fb_ref.child(patient_id).child("NOTE").setValue(NAME + " - " + note_trim);
                     success = 1;
                 }
             }
@@ -119,7 +133,7 @@ public class AddExtraVitals extends AppCompatActivity {
             print_message("Failed to upload any Vitals!");
         }
         else if (success == 1){
-            print_message("Uploaded Vitals!");
+            print_message("Uploaded Changes!");
         }
 
     }

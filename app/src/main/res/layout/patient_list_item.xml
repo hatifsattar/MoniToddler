@@ -47,7 +47,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Case: Jaundice"
+        android:text="Filing Number"
         android:textColor="@color/colorlistFontDesc"
         android:id="@+id/case_name"
         android:layout_below="@+id/doctor_name"
@@ -102,10 +102,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Last Update: 22mins ago"
+        android:text="Update"
         android:textColor="@color/colorlistFontVitals"
         android:id="@+id/last_updated"
-        android:layout_below="@+id/temperature"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_below="@+id/case_name"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textStyle="bold" />
 </RelativeLayout>

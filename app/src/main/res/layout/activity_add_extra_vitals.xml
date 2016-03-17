@@ -78,4 +78,15 @@
         android:hint="Enter any additional Note"
         android:textColor="@color/colorlistFontDesc"
         android:textColorHint="@color/colorlistFontDescHint" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/noteAuthor"
+        android:layout_below="@+id/addNote"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textColor="@color/colorlistFontDesc"
+        android:textColorHint="@color/colorlistFontDescHint"
+        android:hint="Enter your Name" />
 </RelativeLayout>

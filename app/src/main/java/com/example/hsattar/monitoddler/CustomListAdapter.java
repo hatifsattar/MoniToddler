@@ -68,10 +68,9 @@ public class CustomListAdapter  extends ArrayAdapter<PatientInfo> {
             doctor.setText("Dr. " + contactInfo.getDoctor());
             case_name.setText("HFN# " + contactInfo.getCase());
             hr.setText("Heart Rate: " + contactInfo.getHeartRate());
-//            bp.setText("Blood Pressure: " + contactInfo.getBloodPressure());
-            bp.setVisibility(View.GONE);
+            bp.setText("Blood Pressure: " + contactInfo.getBloodPressure());
             sat.setText("Resp. Rate: " + contactInfo.getRespRate());
-            temp.setText("-");//temp.setText("Temp.: " + contactInfo.getTemperature());
+            temp.setText("Temperature: " + contactInfo.getTemperature());//temp.setText("-");
             String value = contactInfo.getCritical();
             last_update.setText("Critical: " + value);
             if (value!=null) {

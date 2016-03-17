@@ -120,7 +120,8 @@ public class ViewPatientsList extends AppCompatActivity {
         final String id = info.getCase().toString();
 
         final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setMessage("Are you sure you want to remove " + info.getName() + " from the database?");
+        alertDialog.setMessage("Are you sure you want to remove " + info.getName() +
+                " from the database?");
 
         alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -253,8 +254,13 @@ public class ViewPatientsList extends AppCompatActivity {
                         String x_axis = d.child("X-AXIS").getValue().toString();
                         String y_axis = d.child("Y-AXIS").getValue().toString();
                         String z_axis = d.child("Z-AXIS").getValue().toString();
+                        String bp = d.child("BP").getValue().toString();
+                        String sat = d.child("SAT").getValue().toString();
 
-                        PatientInfo patientInfo = new PatientInfo(name, age, doctor, id, critical, hr, temp, rr, x_axis, y_axis, z_axis);
+
+
+                        PatientInfo patientInfo = new PatientInfo(name, age, doctor, id, critical,
+                                hr, temp, rr, x_axis, y_axis, z_axis, bp, sat);
                         infoArrayList.add(patientInfo);
                     }
                 }

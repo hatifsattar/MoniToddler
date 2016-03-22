@@ -22,10 +22,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/custom_view_page"
-        android:paddingBottom="@dimen/view_vertical_margin"
-        android:paddingLeft="@dimen/view_horizontal_margin"
-        android:paddingRight="@dimen/view_horizontal_margin"
-        android:paddingTop="@dimen/view_vertical_margin">
+        android:layout_margin="@dimen/activity_view_margin"
+        android:paddingBottom="@dimen/activity_view_vertical_padding"
+        android:paddingLeft="@dimen/activity_view_horizontal_padding"
+        android:paddingRight="@dimen/activity_view_horizontal_padding"
+        android:paddingTop="@dimen/activity_view_vertical_padding">
 
         <TextView
             android:id="@+id/Name"

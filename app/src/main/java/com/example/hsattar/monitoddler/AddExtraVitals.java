@@ -11,8 +11,6 @@ import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 
-import java.util.PriorityQueue;
-
 public class AddExtraVitals extends AppCompatActivity {
 
     public String patient_name = "";

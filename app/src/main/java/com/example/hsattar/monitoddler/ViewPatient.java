@@ -26,18 +26,19 @@ public class ViewPatient extends AppCompatActivity {
     public String patient_id = "";
     public String patient_name = "";
     Firebase fb_ref;
-    Firebase fb_hr;
+    Firebase fb_note;
     Firebase fb_main;
-    //Firebase fb_temp;
     Firebase fb_crit;
+
+    ValueEventListener note_listener;
+    ValueEventListener crit_listener;
+    ValueEventListener ref_listener;
+
     Firebase fb_x_axis;
     Firebase fb_y_axis;
     Firebase fb_z_axis;
     Firebase fb_rr;
-    ValueEventListener hr_listener;
     //ValueEventListener temp_listener;
-    ValueEventListener crit_listener;
-    ValueEventListener ref_listener;
     ValueEventListener x_axis_listener;
     ValueEventListener y_axis_listener;
     ValueEventListener z_axis_listener;
@@ -237,7 +238,7 @@ public class ViewPatient extends AppCompatActivity {
                     if (value.equals("Yes")) { // null pointer here if value == null
                         Critical.setTextColor(Color.parseColor("#f2181b"));
                         if (MainActivity.EMERGENCY_NOTIFICATION_ENABLE == 1) {
-                            SendNotification(patient_name);
+                            SendNotification(patient_name, true);
                         }
                     } else {
                         Critical.setTextColor(Color.parseColor("#04ea00"));
@@ -249,12 +250,36 @@ public class ViewPatient extends AppCompatActivity {
             public void onCancelled(FirebaseError firebaseError) {  }
         });
 
+        fb_note = fb_ref.child(patient_id).child("NOTE");
+        note_listener = fb_note.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String value = dataSnapshot.getValue(String.class);
+                NOTE.setText(value);
+                if (value!=null) {
+                    if (MainActivity.EMERGENCY_NOTIFICATION_ENABLE == 1) {
+                        SendNotification(patient_name, false);
+                    }
+                }
+            }
 
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {  }
+        });
     }
 
-    private void SendNotification(String patient) {
-        String title = "Monitoddler - Emergency!";
-        String msg = "Emergency! Patient " + patient + " is Critical";
+    private void SendNotification(String patient, boolean critical) {
+        String title = "Monitoddler - EMERGENCY!";
+        String msg = "Patient " + patient.toUpperCase() + " is Critical";
+        String msg_2 = "MoniToddler has detected an Emergency. \n" +
+                "Please go to the main app and check on patient " + patient;
+
+        if (critical == false){
+            title = "Monitoddler - UPDATE!";
+            msg = "New Note for Patient " + patient.toUpperCase();
+            msg_2 = "A new Note has been posted. \n" +
+                    "Please go to the main app and check on patient " + patient;
+        }
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
@@ -266,6 +291,7 @@ public class ViewPatient extends AppCompatActivity {
         mBuilder.setVibrate(new long[] { 1000, 1000, 1000});
 
         Intent resultIntent = new Intent(this,NotificationClass.class);
+        resultIntent.putExtra("MSG", msg_2);
         PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(
                         this,
@@ -287,7 +313,6 @@ public class ViewPatient extends AppCompatActivity {
     protected void onPause() {
         super.onPause();//TODO
         //fb_ref.goOffline();
-
         if (ref_listener!=null) fb_ref.removeEventListener(ref_listener);
 //        if ((MainActivity.EMERGENCY_NOTIFICATION_ENABLE == 0) &&
 //                (crit_listener!=null)) {

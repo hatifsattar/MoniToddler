@@ -31,7 +31,8 @@
         android:layout_alignParentStart="true"
         android:hint="Enter Temperature"
         android:textColorHint="@color/colorlistFontDescHint"
-        android:textColor="@color/colorlistFontDesc"/>
+        android:textColor="@color/colorlistFontDesc"
+        android:inputType="numberDecimal" />
 
     <EditText
         android:layout_width="fill_parent"
@@ -42,7 +43,8 @@
         android:layout_alignParentStart="true"
         android:textColorHint="@color/colorlistFontDescHint"
         android:textColor="@color/colorlistFontDesc"
-        android:hint="Enter Saturation" />
+        android:hint="Enter Saturation"
+        android:inputType="numberDecimal" />
 
     <TextView
         android:layout_width="wrap_content"

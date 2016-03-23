@@ -124,7 +124,7 @@ public class AsyncData extends AsyncTask<String, Void, String> {
         fb.child("Y-AXIS").setValue(String.format("%.5f",prevAccFloatArray[4]));
         fb.child("Z-AXIS").setValue(String.format("%.5f",prevAccFloatArray[5]));
 
-        if (Math.abs(delta) >= 0.08) {
+        if (Math.abs(delta) >= UpdateParams.DELTA_RR) {//0.08
             peakCounter++;
             //reset the delta so the patient has to breathe again
             delta = 0;

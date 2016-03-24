@@ -19,10 +19,6 @@ import com.firebase.client.ValueEventListener;
 
 public class ViewPatient extends AppCompatActivity {
 
-//    public final String TABLE_3 = "MT/patientX";
-//    public final String HEART_RATE_ENTRY = "HR";
-//    public final String CRITICAL_ENTRY = "CRITICAL";
-
     public String patient_id = "";
     public String patient_name = "";
     Firebase fb_ref;
@@ -55,6 +51,7 @@ public class ViewPatient extends AppCompatActivity {
     public TextView BP;
     public TextView SAT;
     public TextView TEMP;
+    public TextView LastUpdate;
 
     public Button add_vitals;
 
@@ -86,6 +83,7 @@ public class ViewPatient extends AppCompatActivity {
         y_axis = (TextView) findViewById(R.id.temp);
         z_axis = (TextView) findViewById(R.id.z_axis);
         Critical = (TextView) findViewById(R.id.critical);
+        LastUpdate = (TextView) findViewById(R.id.lastUpdateTime);
         add_vitals = (Button) findViewById(R.id.buttonAddVitals);
         add_vitals.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -145,7 +143,7 @@ public class ViewPatient extends AppCompatActivity {
                     String y_a = dataSnapshot.child("Y-AXIS").getValue(String.class);
                     String z_a = dataSnapshot.child("Z-AXIS").getValue(String.class);
                     String note = dataSnapshot.child("NOTE").getValue(String.class);
-
+                    String update_time = dataSnapshot.child("UPDATE_TIME").getValue(String.class);
 
                     HR.setText(hr);
                     RR.setText(rr);
@@ -156,6 +154,7 @@ public class ViewPatient extends AppCompatActivity {
                     y_axis.setText(y_a);
                     z_axis.setText(z_a);
                     NOTE.setText("Note:\n" + note);
+                    LastUpdate.setText("Last update: " + update_time);
                 }
             }
 
@@ -177,70 +176,22 @@ public class ViewPatient extends AppCompatActivity {
             public void onCancelled(FirebaseError firebaseError) {
             }
         });
-
-        //Resp Rate
-        fb_rr = fb_ref.child(patient_id).child("RR");
-        rr_listener = fb_rr.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String value = dataSnapshot.getValue(String.class);
-                RR.setText(value);
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-            }
-        });
-
-        fb_x_axis = fb_ref.child(patient_id).child("X-AXIS");
-        x_axis_listener = fb_x_axis.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String value = dataSnapshot.getValue(String.class);
-                x_axis.setText(value);
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) { }
-        });
-
-        fb_y_axis = fb_ref.child(patient_id).child("Y-AXIS");
-        y_axis_listener = fb_y_axis.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String value = dataSnapshot.getValue(String.class);
-                y_axis.setText(value);
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) { }
-        });
-
-        fb_z_axis = fb_ref.child(patient_id).child("Z-AXIS");
-        z_axis_listener = fb_z_axis.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String value = dataSnapshot.getValue(String.class);
-                z_axis.setText(value);
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) { }
-        });
 */
         fb_crit = fb_ref.child(patient_id).child("CRITICAL");
         crit_listener = fb_crit.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String value = dataSnapshot.getValue(String.class);
-                Critical.setText(value);
+                //Critical.setText(value);
                 if (value!=null) {
                     if (value.equals("Yes")) { // null pointer here if value == null
+                        Critical.setText("Patient Critical");
                         Critical.setTextColor(Color.parseColor("#f2181b"));
                         if (MainActivity.EMERGENCY_NOTIFICATION_ENABLE == 1) {
                             SendNotification(patient_name, true);
                         }
                     } else {
+                        Critical.setText("Patient Healthy");
                         Critical.setTextColor(Color.parseColor("#04ea00"));
                     }
                 }

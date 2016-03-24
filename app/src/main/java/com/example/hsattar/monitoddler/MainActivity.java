@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static int EMERGENCY_NOTIFICATION_ENABLE;
 
-    public static int databse_fields_count = 14; //IMPORTANT - Update this when increasing number of upload fields
+    public static int databse_fields_count = 15; //IMPORTANT - Update this when increasing number of upload fields
 
     public static final String FIREBASE_URL = "https://crackling-torch-1983.firebaseio.com/";
 

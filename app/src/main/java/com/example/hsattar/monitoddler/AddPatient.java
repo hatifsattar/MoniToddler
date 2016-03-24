@@ -140,11 +140,12 @@ public class AddPatient extends AppCompatActivity {
         child_ref.child("SAT").setValue("-");//12
         child_ref.child("BP").setValue("-");//13
         child_ref.child("NOTE").setValue("-");//14
+        child_ref.child("UPDATE_TIME").setValue("Last update");//15
 
         //------------------------
         //----- IMPORTANT !!! ----
         //------------------------
-        MainActivity.databse_fields_count = 14; // MAKE SURE this counter corresponds to the number of Fields set to database above
+        MainActivity.databse_fields_count = 15; // MAKE SURE this counter corresponds to the number of Fields set to database above
 
         PATIENT_NAME = Name;
         PATIENT_ID = Id;

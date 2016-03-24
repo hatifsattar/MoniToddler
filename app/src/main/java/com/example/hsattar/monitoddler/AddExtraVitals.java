@@ -11,6 +11,10 @@ import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class AddExtraVitals extends AppCompatActivity {
 
     public String patient_name = "";
@@ -131,6 +135,13 @@ public class AddExtraVitals extends AppCompatActivity {
             print_message("Failed to upload any Vitals!");
         }
         else if (success == 1){
+            SimpleDateFormat formatter = new SimpleDateFormat("EEE, hh:mm a, dd MMM yy");
+            Date current = Calendar.getInstance().getTime();//new Date();
+            String curr_time = formatter.format(current);
+            //print_message("Current Time = " + curr_time);
+
+            fb_ref.child(patient_id).child("UPDATE_TIME").setValue(curr_time);
+
             print_message("Uploaded Changes!");
         }
 

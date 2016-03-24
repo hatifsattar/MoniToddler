@@ -3,8 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.hsattar.monitoddler.MainActivity">
     <item
-        android:id="@+id/action_update_settings"
-        android:orderInCategory="100"
+        android:id="@+id/menu_action_log"
+        android:orderInCategory="99"
         android:title="Start Logging"
         app:showAsAction="never" />
+    <!--<item-->
+        <!--android:id="@+id/menu_action_clear"-->
+        <!--android:orderInCategory="100"-->
+        <!--android:title="Clear Connections"-->
+        <!--app:showAsAction="never" />-->
 </menu>

@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.io.Console;
 import java.util.ArrayList;
@@ -83,6 +84,8 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
 
     private AsyncText task = null;
     private AsyncData taskData = null;
+
+    public ToggleButton toggleButton;
     public boolean scanning;
     public Handler handler;
 
@@ -98,6 +101,8 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
 
         ((Button)rootView.findViewById(R.id.scanbutton)).setOnClickListener(this);
         ((Button)rootView.findViewById(R.id.clearbutton)).setOnClickListener(this);
+        toggleButton = (ToggleButton) rootView.findViewById(R.id.toggleButton);
+        toggleButton.setOnClickListener(this);
         clear();
         //output("Beginning Transmission for Patient: " + SensorTagActivity.patient_name + " ...");
         output("Beginning Transmission for Patient: " + SensorTagActivity.patient_name + " ...\n" +
@@ -122,7 +127,15 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
             case R.id.clearbutton:
                 clear();
                 break;
+            case R.id.toggleButton:
+                //select_sensortag();
+                break;
         }
+    }
+
+    private boolean select_sensortag() {
+        boolean select = toggleButton.isChecked(); //Check if Sensortag 1 or 2 is selected
+        return select;
     }
 
     @Override
@@ -154,6 +167,7 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
 
     public void BTScan()
     {
+        //TODO - Call select_sensortag() here !!!!!!!!!!!
         if(BTAdapter == null)
         {
             output("No Bluetooth Adapter");

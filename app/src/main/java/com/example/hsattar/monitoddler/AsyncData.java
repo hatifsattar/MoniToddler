@@ -29,8 +29,8 @@ public class AsyncData extends AsyncTask<String, Void, String> {
     public static long sampling_counter = 0;
     public static long currentTime = 0;
 
-    private static boolean hr_critical = false;
-    private static boolean rr_critical = false;
+    private static int hr_critical_count = 0;
+    private static boolean patient_critical = false;
 
     // Low Pass Filter
     private static double alpha = 0.5;
@@ -68,11 +68,13 @@ public class AsyncData extends AsyncTask<String, Void, String> {
 
         accZ.setText("Z: " + prevAccFloatArray[5] + "\ngyroZ: " + prevAccFloatArray[2]
                 + "\nAccDeltaZ: " + deltaPercent[5]);
-        if (hrData != null)
+        if (hrData != null) {
             HRText.setText("HR " + hrData.getHeartrate() + "\n AvgHR " + hrData.getAvgHeartrate()
-                + "Peaks " + peakCounter + " delta " + delta);
-        else
+                    + "Peaks " + peakCounter + " delta " + delta);
+        }
+        else {
             HRText.setText("Peaks " + peakCounter + " delta " + delta);
+        }
 
         if (SensorTagActivity.isLogging) {
             SensorTagActivityFragment.loggingText +=
@@ -101,7 +103,7 @@ public class AsyncData extends AsyncTask<String, Void, String> {
         //Firebase fb = MainActivity.ref.child("MT").child("patientX");
         Firebase fb = SensorTagActivity.fb_ref.child(SensorTagActivity.patient_id);
 
-        hr_critical = false;
+        patient_critical = false;
 
         if (hrData != null) {
             //Write heart rate after cutting it to 5 significant numbers
@@ -112,18 +114,20 @@ public class AsyncData extends AsyncTask<String, Void, String> {
             //Determining Critical
             //Obtain the number only
             String[] split_str = hr_cut.split("/");
-            //String hr = hr_cut.substring(0, 2);
             float hr_num = Float.parseFloat(split_str[0]);
-            if ((hr_num > 100) || (hr_num < 60)){
-                hr_critical = true;
-            } else {
-                hr_critical = false;
+            if ((hr_num > UpdateParams.UPPER_HR_PER_MIN_LIMIT) ||
+                (hr_num < UpdateParams.LOWER_HR_PER_MIN_LIMIT)){
+                //Patient is Critical
+                hr_critical_count = hr_critical_count + 1;
             }
         }
+
+        //Upload raw accelerometer stats to server
         fb.child("X-AXIS").setValue(String.format("%.5f",prevAccFloatArray[3]));
         fb.child("Y-AXIS").setValue(String.format("%.5f",prevAccFloatArray[4]));
         fb.child("Z-AXIS").setValue(String.format("%.5f",prevAccFloatArray[5]));
 
+        //Calculate number of breaths (peaks) detected
         if (Math.abs(delta) >= UpdateParams.DELTA_RR) {//0.08
             peakCounter++;
             //reset the delta so the patient has to breathe again
@@ -137,16 +141,24 @@ public class AsyncData extends AsyncTask<String, Void, String> {
             peakCounter = 0;
         }*/
 
-        if (currentTime >= this.sampling_counter + 10000 ) {
+        if (currentTime >= this.sampling_counter + 10000 ) { //10 secs
             if (peakCounter > 0){
                 fb.child("CRITICAL").setValue("No");
-                rr_critical = false;
             } else {
                 fb.child("CRITICAL").setValue("Yes");
-                rr_critical = true;
             }
+
+            //TODO - Use this
+//            if ((peakCounter > 0) &&
+//                (hr_critical_count == 0)) {
+//                fb.child("CRITICAL").setValue("No");
+//            } else {
+//                fb.child("CRITICAL").setValue("Yes");
+//            }
+
             this.sampling_counter = currentTime;
             peakCounter = 0;
+            hr_critical_count = 0;
         }
 
 //            if (rr_critical || hr_critical){
@@ -155,12 +167,10 @@ public class AsyncData extends AsyncTask<String, Void, String> {
 //                fb.child("CRITICAL").setValue("No");
 //            }
 
-        //send resp rate to firebase server
+        //send Resp Rate to firebase server
         //int resp_rate = peakCounter * 6;
         fb.child("RR").setValue(peakCounter);
 
-        //rr_critical = false;
-        hr_critical = false;
     }
 
     public float[] convertAcc(final byte[] value) {

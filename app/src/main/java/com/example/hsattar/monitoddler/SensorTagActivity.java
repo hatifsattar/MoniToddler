@@ -1,6 +1,7 @@
 package com.example.hsattar.monitoddler;
 
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -100,8 +101,8 @@ public class SensorTagActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_update_settings) {
-            MenuItem settingsTitle = menu.findItem(R.id.action_update_settings);
+        if (id == R.id.menu_action_log) {
+            MenuItem settingsTitle = menu.findItem(R.id.menu_action_log);
             if (!isLogging) {
                 try {
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
@@ -137,6 +138,10 @@ public class SensorTagActivity extends AppCompatActivity {
             }
 
         }
+//        if (id == R.id.menu_action_clear) {
+//            Fragment fragment = getFragmentManager().findFragmentById(R.id.fragment);
+//            fragment.clear();
+//        }
 
         return super.onOptionsItemSelected(item);
     }

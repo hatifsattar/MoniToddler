@@ -187,7 +187,7 @@ public class ViewPatient extends AppCompatActivity {
 
                     //graphing
                     //make sure there are only a certain number of entries in the arraylist
-                    int chartEntries = 75;
+                    int chartEntries = 250;
 
                     if (AccXEntries.size()>chartEntries)
                         AccXEntries.remove(0);
@@ -248,7 +248,7 @@ public class ViewPatient extends AppCompatActivity {
                     Linechart1.notifyDataSetChanged();
                     Linechart1.invalidate();
                     //force the graph to show the most recent values
-                    Linechart1.setVisibleXRangeMaximum(50);
+                    Linechart1.setVisibleXRangeMaximum(chartEntries);
                     Linechart1.moveViewToX(TimeAxis);
                     //update time
                     TimeAxis++;

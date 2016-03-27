@@ -1,17 +1,32 @@
 package com.example.hsattar.monitoddler;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.support.annotation.ColorInt;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
+import com.firebase.client.collection.LLRBNode;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.wahoofitness.connector.capabilities.Heartrate;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 // This AsyncTask is for data coming from sensortag
 public class AsyncData extends AsyncTask<String, Void, String> {
@@ -70,11 +85,79 @@ public class AsyncData extends AsyncTask<String, Void, String> {
                 + "\nAccDeltaZ: " + deltaPercent[5]);
         if (hrData != null) {
             HRText.setText("HR " + hrData.getHeartrate() + "\n AvgHR " + hrData.getAvgHeartrate()
-                    + "Peaks " + peakCounter + " delta " + delta);
+                    + "Breaths/10s " + peakCounter /*+ " delta " + delta*/);
         }
         else {
-            HRText.setText("Peaks " + peakCounter + " delta " + delta);
+            HRText.setText("Breaths/10s " + peakCounter /*+ " delta " + delta*/);
         }
+
+        //graphing
+        //make sure there are only a certain number of entries in the arraylist
+        int chartEntries = 51;
+
+        if (SensorTagActivityFragment.AccXEntries.size()>chartEntries)
+            SensorTagActivityFragment.AccXEntries.remove(0);
+        if (SensorTagActivityFragment.AccYEntries.size()>chartEntries)
+            SensorTagActivityFragment.AccYEntries.remove(0);
+        if (SensorTagActivityFragment.AccZEntries.size()>chartEntries)
+            SensorTagActivityFragment.AccZEntries.remove(0);
+
+        //add new entry to Yaxis
+        SensorTagActivityFragment.AccXEntries.add(new Entry(prevAccFloatArray[3],SensorTagActivityFragment.TimeAxis));
+        SensorTagActivityFragment.AccYEntries.add(new Entry(prevAccFloatArray[4],SensorTagActivityFragment.TimeAxis));
+        SensorTagActivityFragment.AccZEntries.add(new Entry(prevAccFloatArray[5],SensorTagActivityFragment.TimeAxis));
+        //fill the new dataset with all data
+        Color mColour = new Color();
+        LineDataSet datasetX = new LineDataSet(SensorTagActivityFragment.AccXEntries, "X");
+        datasetX.setDrawCircles(false);
+        datasetX.setDrawValues(false);
+        datasetX.setLineWidth(4);
+        datasetX.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+        LineDataSet datasetY = new LineDataSet(SensorTagActivityFragment.AccYEntries, "Y");
+        datasetY.setDrawCircles(false);
+        datasetY.setDrawValues(false);
+        datasetY.setLineWidth(4);
+        datasetY.setColor(ColorTemplate.VORDIPLOM_COLORS[2]);
+        LineDataSet datasetZ = new LineDataSet(SensorTagActivityFragment.AccZEntries, "Z");
+        datasetZ.setDrawCircles(false);
+        datasetZ.setDrawValues(false);
+        datasetZ.setLineWidth(4);
+        datasetZ.setColor(ColorTemplate.VORDIPLOM_COLORS[3]);
+        //fill in the Xaxis labels
+        SensorTagActivityFragment.labels.add(Integer.toString(SensorTagActivityFragment.TimeAxis));
+        //find Line chart view
+        LineChart Linechart1 = (LineChart) rootView.findViewById(R.id.Linechart1);
+        //put together the xaxis and yaxis
+        ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
+        dataSets.add(datasetX);
+        dataSets.add(datasetY);
+        dataSets.add(datasetZ);
+        LineData datas = new LineData(SensorTagActivityFragment.labels,dataSets);
+        //zoom the Yaxis based on visible data (needs to happen before setting data)
+        YAxis leftAxis = Linechart1.getAxisLeft();
+        YAxis rightAxis = Linechart1.getAxisRight();
+        leftAxis.resetAxisMaxValue();
+        leftAxis.resetAxisMinValue();
+        rightAxis.resetAxisMaxValue();
+        rightAxis.resetAxisMinValue();
+        //dont show Xaxis numbers
+        XAxis xaxis = Linechart1.getXAxis();
+        xaxis.setDrawLabels(false);
+        //set up legend with white text
+        Legend legend = Linechart1.getLegend();
+        legend.setTextColor(Color.WHITE);
+        //set data
+        Linechart1.setDescription("");
+        //Linechart1.setBackgroundColor(Color.WHITE); //defaults to transparent
+        Linechart1.setDrawGridBackground(false);
+        Linechart1.setData(datas);
+        Linechart1.notifyDataSetChanged();
+        Linechart1.invalidate();
+        //force the graph to show the most recent values
+        Linechart1.setVisibleXRangeMaximum(50);
+        Linechart1.moveViewToX(SensorTagActivityFragment.TimeAxis);
+        //update time
+        SensorTagActivityFragment.TimeAxis++;
 
         if (SensorTagActivity.isLogging) {
             SensorTagActivityFragment.loggingText +=

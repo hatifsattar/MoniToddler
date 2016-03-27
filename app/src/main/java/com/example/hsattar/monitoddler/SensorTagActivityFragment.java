@@ -27,6 +27,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.io.Console;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -36,6 +37,7 @@ import java.util.UUID;
 import com.example.hsattar.monitoddler.HardwareConnectorService;
 
 import com.firebase.client.Firebase;
+import com.github.mikephil.charting.data.Entry;
 import com.wahoofitness.connector.capabilities.Capability;
 import com.wahoofitness.connector.capabilities.Capability.CapabilityType;
 import com.wahoofitness.connector.capabilities.Heartrate;
@@ -70,6 +72,8 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
 
     public String DeviceName="SensorTag";
     public String DeviceNameHR="TICKR";
+    public String Sensortag1Addr = "68:C9:0B:06:75:0D";
+    public String Sensortag2Addr = "B0:B4:48:BC:6D:05";
     public static String currentText = "";
     public static String loggingText = "";
     public BluetoothAdapter BTAdapter;
@@ -81,6 +85,13 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
     List <BluetoothGattCharacteristic> charList = new ArrayList<BluetoothGattCharacteristic>();
     List <BluetoothGattDescriptor> descList = new ArrayList<BluetoothGattDescriptor>();
     Collection<ConnectionParams> wahooBTdevices = new ArrayList<ConnectionParams>();
+
+    //graphing
+    public static ArrayList<Entry> AccXEntries = new ArrayList<>();
+    public static ArrayList<Entry> AccYEntries = new ArrayList<>();
+    public static ArrayList<Entry> AccZEntries = new ArrayList<>();
+    public static int TimeAxis = 0;
+    public static ArrayList<String> labels = new ArrayList<String>();
 
     private AsyncText task = null;
     private AsyncData taskData = null;
@@ -105,7 +116,7 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
         toggleButton.setOnClickListener(this);
         clear();
         //output("Beginning Transmission for Patient: " + SensorTagActivity.patient_name + " ...");
-        output("Beginning Transmission for Patient: " + SensorTagActivity.patient_name + " ...\n" +
+        output("Beginning Transmission for Patient: " + SensorTagActivity.patient_name + "\n" +
                 "Turn on Bluetooth Device(s) and press Scan");
 
         BluetoothManager BTManager=(BluetoothManager) getContext().getSystemService(Context.BLUETOOTH_SERVICE);
@@ -163,11 +174,17 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
             BTGatt.close();
         }
         BTGatt=null;
+
+        //clear all ArrayLists
+        AccXEntries.clear();
+        AccYEntries.clear();
+        AccZEntries.clear();
+        labels.clear();
+        TimeAxis = 0;
     }
 
     public void BTScan()
     {
-        //TODO - Call select_sensortag() here !!!!!!!!!!!
         if(BTAdapter == null)
         {
             output("No Bluetooth Adapter");
@@ -228,22 +245,32 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
             }
 
             // sensortag
-            if (device.getName().contains(DeviceName))
+            // which sensortag does user want?
+            String deviceAddr;
+            ToggleButton mbutton = (ToggleButton) rootView.findViewById(R.id.toggleButton);
+            if (mbutton.isChecked() == true)
+                deviceAddr =Sensortag2Addr;
+            else
+                deviceAddr = Sensortag1Addr;
+
+            //conect to the sensortag user wants
+            if (device.getAddress().equals(deviceAddr))
             {
                 if (BTDevice == null) {
                     BTDevice=device;
                     BTGatt=BTDevice.connectGatt(getContext(),false,GattCallback);
+                    output("Connected to " + device.getName() /*+ ":" + device.getAddress() + ", rssi:" + rssi*/);
                 }
                 else {
                     if (BTDevice.getAddress().equals(device.getAddress())) {
                         if (!showedConnectedMsg[0]) {
-                            output("Sensortag already connected!");
+                            //output("Sensortag already connected!");
                             showedConnectedMsg[0] = true;
                         }
                         return;
                     }
                 }
-                output(device.getName() + ":" + device.getAddress() + ", rssi:" + rssi);
+                //output(device.getName() + ":" + device.getAddress() + ", rssi:" + rssi);
             }
             // wahoo tickr
             else if (device.getName().contains(DeviceNameHR))
@@ -254,7 +281,7 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
                     if (elem.getName().contains(DeviceNameHR)) {
                         if (wahooBTDeviceHR == null) {
                             //connect to wahoo tickr if name matches
-                            output(device.getName() + ":" + device.getAddress() + ", rssi:" + rssi);
+                            output("Connected to " + device.getName() /*+ ":" + device.getAddress() + ", rssi:" + rssi*/);
                             wahooBTDeviceHR = connectSensor(elem);
                         }
                     }
@@ -287,7 +314,7 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
                         }
                     }
 
-                    output("Total characteristics " + charList.size());
+                    //output("Total characteristics " + charList.size());
 
                     //for sensortag
                     if (gatt.getDevice().getName().contains(DeviceName)) {
@@ -325,17 +352,17 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
 
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             if (status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED) {
-                output("Connected to GATT Server");
+                //output("Connected to GATT Server");
                 gatt.discoverServices();
             } else {
-                output("Disconnected from GATT Server");
+                //output("Disconnected from GATT Server");
                 gatt.close();
             }
         }
 
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             //gets called when discoverServices above
-            output("Discover & Config GATT Services");
+            //output("Discover & Config GATT Services");
             ssstep = 0;
             SetupSensorStep(gatt);
         }

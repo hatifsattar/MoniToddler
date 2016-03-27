@@ -125,6 +125,13 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
         scanning=false;
         handler=new Handler();
 
+        //clear all ArrayLists for safety in case another activity changed the data
+        AccXEntries.clear();
+        AccYEntries.clear();
+        AccZEntries.clear();
+        labels.clear();
+        TimeAxis = 0;
+
         return rootView;
     }
 

@@ -16,6 +16,16 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
+
+import java.util.ArrayList;
 
 public class ViewPatient extends AppCompatActivity {
 
@@ -55,6 +65,13 @@ public class ViewPatient extends AppCompatActivity {
 
     public Button add_vitals;
 
+    //graphing
+    public static ArrayList<Entry> AccXEntries = new ArrayList<>();
+    public static ArrayList<Entry> AccYEntries = new ArrayList<>();
+    public static ArrayList<Entry> AccZEntries = new ArrayList<>();
+    public static int TimeAxis = 0;
+    public static ArrayList<String> labels = new ArrayList<String>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +109,13 @@ public class ViewPatient extends AppCompatActivity {
         });
 
         firebase_setup();
+
+        //clear all ArrayLists to be safe
+        AccXEntries.clear();
+        AccYEntries.clear();
+        AccZEntries.clear();
+        labels.clear();
+        TimeAxis = 0;
 
     }
 
@@ -155,6 +179,74 @@ public class ViewPatient extends AppCompatActivity {
                     z_axis.setText(z_a);
                     NOTE.setText("Note:\n" + note);
                     LastUpdate.setText("Last update: " + update_time);
+
+                    //graphing
+                    //make sure there are only a certain number of entries in the arraylist
+                    int chartEntries = 75;
+
+                    if (AccXEntries.size()>chartEntries)
+                        AccXEntries.remove(0);
+                    if (AccYEntries.size()>chartEntries)
+                        AccYEntries.remove(0);
+                    if (AccZEntries.size()>chartEntries)
+                        AccZEntries.remove(0);
+
+                    //add new entry to Yaxis
+                    AccXEntries.add(new Entry(Float.parseFloat(x_a),TimeAxis));
+                    AccYEntries.add(new Entry(Float.parseFloat(y_a),TimeAxis));
+                    AccZEntries.add(new Entry(Float.parseFloat(z_a),TimeAxis));
+                    //fill the new dataset with all data
+                    Color mColour = new Color();
+                    LineDataSet datasetX = new LineDataSet(AccXEntries, "X");
+                    datasetX.setDrawCircles(false);
+                    datasetX.setDrawValues(false);
+                    datasetX.setLineWidth(4);
+                    datasetX.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+                    LineDataSet datasetY = new LineDataSet(AccYEntries, "Y");
+                    datasetY.setDrawCircles(false);
+                    datasetY.setDrawValues(false);
+                    datasetY.setLineWidth(4);
+                    datasetY.setColor(ColorTemplate.VORDIPLOM_COLORS[2]);
+                    LineDataSet datasetZ = new LineDataSet(AccZEntries, "Z");
+                    datasetZ.setDrawCircles(false);
+                    datasetZ.setDrawValues(false);
+                    datasetZ.setLineWidth(4);
+                    datasetZ.setColor(ColorTemplate.VORDIPLOM_COLORS[3]);
+                    //fill in the Xaxis labels
+                    labels.add(Integer.toString(TimeAxis));
+                    //find Line chart view
+                    LineChart Linechart1 = (LineChart) findViewById(R.id.LinechartView);
+                    //put together the xaxis and yaxis
+                    ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
+                    dataSets.add(datasetX);
+                    dataSets.add(datasetY);
+                    dataSets.add(datasetZ);
+                    LineData datas = new LineData(labels,dataSets);
+                    //zoom the Yaxis based on visible data (needs to happen before setting data)
+                    YAxis leftAxis = Linechart1.getAxisLeft();
+                    YAxis rightAxis = Linechart1.getAxisRight();
+                    leftAxis.resetAxisMaxValue();
+                    leftAxis.resetAxisMinValue();
+                    rightAxis.resetAxisMaxValue();
+                    rightAxis.resetAxisMinValue();
+                    //dont show Xaxis numbers
+                    XAxis xaxis = Linechart1.getXAxis();
+                    xaxis.setDrawLabels(false);
+                    //set up legend with white text
+                    Legend legend = Linechart1.getLegend();
+                    legend.setTextColor(Color.WHITE);
+                    //set data
+                    Linechart1.setDescription("");
+                    //Linechart1.setBackgroundColor(Color.WHITE); //defaults to transparent
+                    Linechart1.setDrawGridBackground(false);
+                    Linechart1.setData(datas);
+                    Linechart1.notifyDataSetChanged();
+                    Linechart1.invalidate();
+                    //force the graph to show the most recent values
+                    Linechart1.setVisibleXRangeMaximum(50);
+                    Linechart1.moveViewToX(TimeAxis);
+                    //update time
+                    TimeAxis++;
                 }
             }
 
@@ -274,6 +366,13 @@ public class ViewPatient extends AppCompatActivity {
 //        if (x_axis_listener!=null) fb_x_axis.removeEventListener(x_axis_listener);
 //        if (y_axis_listener!=null) fb_y_axis.removeEventListener(y_axis_listener);
 //        if (z_axis_listener!=null) fb_z_axis.removeEventListener(z_axis_listener);
+
+        //clear all ArrayLists
+        AccXEntries.clear();
+        AccYEntries.clear();
+        AccZEntries.clear();
+        labels.clear();
+        TimeAxis = 0;
     }
 
     @Override

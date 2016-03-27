@@ -41,6 +41,7 @@ public class AsyncData extends AsyncTask<String, Void, String> {
     //private float[] deltaCounter = {0,0,0,0,0,0,0};
     private static float delta = 0;
     private static int peakCounter = 0;
+    private static int peakCounterMinute = 0;
     public static long sampling_counter = 0;
     public static long currentTime = 0;
 
@@ -85,10 +86,10 @@ public class AsyncData extends AsyncTask<String, Void, String> {
                 + "\nAccDeltaZ: " + deltaPercent[5]);
         if (hrData != null) {
             HRText.setText("HR " + hrData.getHeartrate() + "\n AvgHR " + hrData.getAvgHeartrate()
-                    + "Breaths/10s " + peakCounter /*+ " delta " + delta*/);
+                    + "Breaths/min " + peakCounterMinute + " Breaths " + peakCounter);
         }
         else {
-            HRText.setText("Breaths/10s " + peakCounter /*+ " delta " + delta*/);
+            HRText.setText("Breaths/min " + peakCounterMinute + " Breaths " + peakCounter);
         }
 
         //graphing
@@ -240,9 +241,12 @@ public class AsyncData extends AsyncTask<String, Void, String> {
 //            }
 
             this.sampling_counter = currentTime;
+            peakCounterMinute = peakCounter*6;//display #br/min
             peakCounter = 0;
             hr_critical_count = 0;
         }
+
+        //for displaying, per minute breaths
 
 //            if (rr_critical || hr_critical){
 //                fb.child("CRITICAL").setValue("Yes");

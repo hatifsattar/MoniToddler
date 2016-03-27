@@ -330,6 +330,11 @@
                     android:layout_marginBottom="5dp"
                     android:textStyle="italic" />
             </RelativeLayout>
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/LinechartView"
+                android:layout_width="match_parent"
+                android:layout_height="300dp" />
         </LinearLayout>
     </ScrollView>
 

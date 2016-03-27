@@ -170,6 +170,7 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
         }
         super.onPause();
         BTDevice=null;
+        MainActivity.SensorTagConnected = false;
         if (wahooBTDeviceHR != null)
         {
             wahooBTDeviceHR.disconnect();
@@ -223,6 +224,7 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
             showedConnectedMsg[0] = false;
             showedConnectedMsg[1] = false;
             BTDevice=null;
+            MainActivity.SensorTagConnected = false;
             if (BTGatt != null)
             {
                 BTGatt.disconnect();
@@ -266,6 +268,7 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
                 if (BTDevice == null) {
                     BTDevice=device;
                     BTGatt=BTDevice.connectGatt(getContext(),false,GattCallback);
+                    MainActivity.SensorTagConnected = true;
                     output("Connected to " + device.getName() /*+ ":" + device.getAddress() + ", rssi:" + rssi*/);
                 }
                 else {
@@ -415,6 +418,7 @@ public class SensorTagActivityFragment extends HardwareConnectorFragment
         myTextView.setText(currentText);
         //disconnect
         BTDevice=null;
+        MainActivity.SensorTagConnected = false;
         if (BTGatt != null)
         {
             BTGatt.disconnect();

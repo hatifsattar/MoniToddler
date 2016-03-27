@@ -31,6 +31,8 @@ public class ViewPatient extends AppCompatActivity {
 
     public String patient_id = "";
     public String patient_name = "";
+    public String note_read = "yes";
+
     Firebase fb_ref;
     Firebase fb_note;
     Firebase fb_main;
@@ -88,6 +90,8 @@ public class ViewPatient extends AppCompatActivity {
             patient_id = bundle.getString("ID");
             fb_ref = MainActivity.ref.child("MT2");
         }
+
+        note_read = "yes";
 
         Name = (TextView) findViewById(R.id.Name);
         HR = (TextView) findViewById(R.id.heartrate);
@@ -158,6 +162,7 @@ public class ViewPatient extends AppCompatActivity {
                     //String doctor = d.child("DOCTOR").getValue().toString();
                     //String critical = d.child("CRITICAL").getValue().toString();
                     //String age = d.child("AGE").getValue().toString();
+                    String delta = dataSnapshot.child("DELTA").getValue().toString();
                     String hr = dataSnapshot.child("HR").getValue(String.class);
                     String temp = dataSnapshot.child("TEMP").getValue(String.class);
                     String rr = dataSnapshot.child("RR").getValue(String.class);
@@ -247,6 +252,12 @@ public class ViewPatient extends AppCompatActivity {
                     Linechart1.moveViewToX(TimeAxis);
                     //update time
                     TimeAxis++;
+
+                    if (delta.matches("yes")){
+                        note_read = "yes";
+                    } else {
+                        note_read = "No";
+                    }
                 }
             }
 
@@ -300,8 +311,10 @@ public class ViewPatient extends AppCompatActivity {
                 String value = dataSnapshot.getValue(String.class);
                 NOTE.setText(value);
                 if (value!=null) {
-                    if (MainActivity.EMERGENCY_NOTIFICATION_ENABLE == 1) {
+                    if ((MainActivity.EMERGENCY_NOTIFICATION_ENABLE == 1) &&
+                            note_read.matches("no")){
                         SendNotification(patient_name, false);
+                        fb_ref.child(patient_id).child("DELTA").setValue("yes");
                     }
                 }
             }

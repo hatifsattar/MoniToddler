@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int MT_PERMISSION_ACCESS_BLUETOOTH = 14;
     private static final int MT_PERMISSION_ACCESS_STATE = 15;
 
+    public static boolean SensorTagConnected;
+
     public static int EMERGENCY_NOTIFICATION_ENABLE;
 
     public static int databse_fields_count = 15; //IMPORTANT - Update this when increasing number of upload fields
@@ -70,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         mContext = this;
 
         EMERGENCY_NOTIFICATION_ENABLE = 0;
+        SensorTagConnected = false;
 
         // Add items via the Button and EditText at the bottom of the window.
         final Button btn_view = (Button) findViewById(R.id.viewPatient);

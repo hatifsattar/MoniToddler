@@ -141,6 +141,7 @@ public class AddExtraVitals extends AppCompatActivity {
             //print_message("Current Time = " + curr_time);
 
             fb_ref.child(patient_id).child("UPDATE_TIME").setValue(curr_time);
+            fb_ref.child(patient_id).child("DELTA").setValue("no");
 
             print_message("Uploaded Changes!");
         }

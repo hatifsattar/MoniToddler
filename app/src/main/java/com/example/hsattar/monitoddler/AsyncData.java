@@ -226,10 +226,18 @@ public class AsyncData extends AsyncTask<String, Void, String> {
         }*/
 
         if (currentTime >= this.sampling_counter + 10000 ) { //10 secs
-            if (peakCounter > 0){
-                fb.child("CRITICAL").setValue("No");
-            } else {
+//            if (peakCounter > 0){
+//                fb.child("CRITICAL").setValue("No");
+//            } else {
+//                fb.child("CRITICAL").setValue("Yes");
+//            }
+
+            if (((peakCounter == 0) && (MainActivity.SensorTagConnected)) ||
+                    ((hr_critical_count != 0) && (hrData != null))) {
                 fb.child("CRITICAL").setValue("Yes");
+            }
+            else {
+                fb.child("CRITICAL").setValue("No");
             }
 
             //TODO - Use this

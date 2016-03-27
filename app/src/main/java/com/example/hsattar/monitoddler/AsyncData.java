@@ -256,7 +256,7 @@ public class AsyncData extends AsyncTask<String, Void, String> {
 
         //send Resp Rate to firebase server
         //int resp_rate = peakCounter * 6;
-        fb.child("RR").setValue(peakCounter);
+        fb.child("RR").setValue(peakCounterMinute);
 
     }
 

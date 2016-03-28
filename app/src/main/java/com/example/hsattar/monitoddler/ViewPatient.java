@@ -187,7 +187,7 @@ public class ViewPatient extends AppCompatActivity {
 
                     //graphing
                     //make sure there are only a certain number of entries in the arraylist
-                    int chartEntries = 250;
+                    int chartEntries = 400;
 
                     if (AccXEntries.size()>chartEntries)
                         AccXEntries.remove(0);
@@ -196,62 +196,67 @@ public class ViewPatient extends AppCompatActivity {
                     if (AccZEntries.size()>chartEntries)
                         AccZEntries.remove(0);
 
-                    //add new entry to Yaxis
-                    AccXEntries.add(new Entry(Float.parseFloat(x_a),TimeAxis));
-                    AccYEntries.add(new Entry(Float.parseFloat(y_a),TimeAxis));
-                    AccZEntries.add(new Entry(Float.parseFloat(z_a),TimeAxis));
-                    //fill the new dataset with all data
-                    Color mColour = new Color();
-                    LineDataSet datasetX = new LineDataSet(AccXEntries, "X");
-                    datasetX.setDrawCircles(false);
-                    datasetX.setDrawValues(false);
-                    datasetX.setLineWidth(4);
-                    datasetX.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
-                    LineDataSet datasetY = new LineDataSet(AccYEntries, "Y");
-                    datasetY.setDrawCircles(false);
-                    datasetY.setDrawValues(false);
-                    datasetY.setLineWidth(4);
-                    datasetY.setColor(ColorTemplate.VORDIPLOM_COLORS[2]);
-                    LineDataSet datasetZ = new LineDataSet(AccZEntries, "Z");
-                    datasetZ.setDrawCircles(false);
-                    datasetZ.setDrawValues(false);
-                    datasetZ.setLineWidth(4);
-                    datasetZ.setColor(ColorTemplate.VORDIPLOM_COLORS[3]);
-                    //fill in the Xaxis labels
-                    labels.add(Integer.toString(TimeAxis));
-                    //find Line chart view
-                    LineChart Linechart1 = (LineChart) findViewById(R.id.LinechartView);
-                    //put together the xaxis and yaxis
-                    ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
-                    dataSets.add(datasetX);
-                    dataSets.add(datasetY);
-                    dataSets.add(datasetZ);
-                    LineData datas = new LineData(labels,dataSets);
-                    //zoom the Yaxis based on visible data (needs to happen before setting data)
-                    YAxis leftAxis = Linechart1.getAxisLeft();
-                    YAxis rightAxis = Linechart1.getAxisRight();
-                    leftAxis.resetAxisMaxValue();
-                    leftAxis.resetAxisMinValue();
-                    rightAxis.resetAxisMaxValue();
-                    rightAxis.resetAxisMinValue();
-                    //dont show Xaxis numbers
-                    XAxis xaxis = Linechart1.getXAxis();
-                    xaxis.setDrawLabels(false);
-                    //set up legend with white text
-                    Legend legend = Linechart1.getLegend();
-                    legend.setTextColor(Color.WHITE);
-                    //set data
-                    Linechart1.setDescription("");
-                    //Linechart1.setBackgroundColor(Color.WHITE); //defaults to transparent
-                    Linechart1.setDrawGridBackground(false);
-                    Linechart1.setData(datas);
-                    Linechart1.notifyDataSetChanged();
-                    Linechart1.invalidate();
-                    //force the graph to show the most recent values
-                    Linechart1.setVisibleXRangeMaximum(chartEntries);
-                    Linechart1.moveViewToX(TimeAxis);
-                    //update time
-                    TimeAxis++;
+                    //add new entry to Yaxis if elements not null
+                    if (    (x_a != null) && (!x_a.matches("-")) &&
+                            (y_a != null) && (!y_a.matches("-")) &&
+                            (z_a != null) && (!z_a.matches("-")) ) {
+                        AccXEntries.add(new Entry(Float.parseFloat(x_a), TimeAxis));
+                        AccYEntries.add(new Entry(Float.parseFloat(y_a), TimeAxis));
+                        AccZEntries.add(new Entry(Float.parseFloat(z_a), TimeAxis));
+
+                        //fill the new dataset with all data
+                        Color mColour = new Color();
+                        LineDataSet datasetX = new LineDataSet(AccXEntries, "X");
+                        datasetX.setDrawCircles(false);
+                        datasetX.setDrawValues(false);
+                        datasetX.setLineWidth(4);
+                        datasetX.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+                        LineDataSet datasetY = new LineDataSet(AccYEntries, "Y");
+                        datasetY.setDrawCircles(false);
+                        datasetY.setDrawValues(false);
+                        datasetY.setLineWidth(4);
+                        datasetY.setColor(ColorTemplate.VORDIPLOM_COLORS[2]);
+                        LineDataSet datasetZ = new LineDataSet(AccZEntries, "Z");
+                        datasetZ.setDrawCircles(false);
+                        datasetZ.setDrawValues(false);
+                        datasetZ.setLineWidth(4);
+                        datasetZ.setColor(ColorTemplate.VORDIPLOM_COLORS[3]);
+                        //fill in the Xaxis labels
+                        labels.add(Integer.toString(TimeAxis));
+                        //find Line chart view
+                        LineChart Linechart1 = (LineChart) findViewById(R.id.LinechartView);
+                        //put together the xaxis and yaxis
+                        ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
+                        dataSets.add(datasetX);
+                        dataSets.add(datasetY);
+                        dataSets.add(datasetZ);
+                        LineData datas = new LineData(labels, dataSets);
+                        //zoom the Yaxis based on visible data (needs to happen before setting data)
+                        YAxis leftAxis = Linechart1.getAxisLeft();
+                        YAxis rightAxis = Linechart1.getAxisRight();
+                        leftAxis.resetAxisMaxValue();
+                        leftAxis.resetAxisMinValue();
+                        rightAxis.resetAxisMaxValue();
+                        rightAxis.resetAxisMinValue();
+                        //dont show Xaxis numbers
+                        XAxis xaxis = Linechart1.getXAxis();
+                        xaxis.setDrawLabels(false);
+                        //set up legend with white text
+                        Legend legend = Linechart1.getLegend();
+                        legend.setTextColor(Color.WHITE);
+                        //set data
+                        Linechart1.setDescription("");
+                        //Linechart1.setBackgroundColor(Color.WHITE); //defaults to transparent
+                        Linechart1.setDrawGridBackground(false);
+                        Linechart1.setData(datas);
+                        Linechart1.notifyDataSetChanged();
+                        Linechart1.invalidate();
+                        //force the graph to show the most recent values
+                        Linechart1.setVisibleXRangeMaximum(chartEntries);
+                        Linechart1.moveViewToX(TimeAxis);
+                        //update time
+                        TimeAxis++;
+                    }
 
                     if (delta.matches("yes")){
                         note_read = "yes";

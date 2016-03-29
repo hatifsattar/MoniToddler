@@ -32,6 +32,8 @@ public class ViewPatient extends AppCompatActivity {
     public String patient_id = "";
     public String patient_name = "";
     public String note_read = "yes";
+    public boolean new_note = false;
+    public boolean new_critical = false;
 
     Firebase fb_ref;
     Firebase fb_note;
@@ -92,6 +94,8 @@ public class ViewPatient extends AppCompatActivity {
         }
 
         note_read = "yes";
+        new_note = false;
+        new_critical = false;
 
         Name = (TextView) findViewById(R.id.Name);
         HR = (TextView) findViewById(R.id.heartrate);
@@ -295,9 +299,18 @@ public class ViewPatient extends AppCompatActivity {
                     if (value.equals("Yes")) { // null pointer here if value == null
                         Critical.setText("Patient Critical");
                         Critical.setTextColor(Color.parseColor("#f2181b"));
-                        if (MainActivity.EMERGENCY_NOTIFICATION_ENABLE == 1) {
-                            SendNotification(patient_name, true);
+//                        if (new_critical == false){
+//                            new_critical = true;
+//                        }
+//                        else if ((MainActivity.EMERGENCY_NOTIFICATION_ENABLE == 1) &&
+//                                (new_critical == true)){
+//                            SendNotification(patient_name, true, value);
+//                        }
+
+                        if (MainActivity.EMERGENCY_NOTIFICATION_ENABLE == 1){
+                            SendNotification(patient_name, true, value);
                         }
+
                     } else {
                         Critical.setText("Patient Healthy");
                         Critical.setTextColor(Color.parseColor("#04ea00"));
@@ -316,10 +329,12 @@ public class ViewPatient extends AppCompatActivity {
                 String value = dataSnapshot.getValue(String.class);
                 NOTE.setText(value);
                 if (value!=null) {
-                    if ((MainActivity.EMERGENCY_NOTIFICATION_ENABLE == 1) &&
-                            note_read.matches("no")){
-                        SendNotification(patient_name, false);
-                        fb_ref.child(patient_id).child("DELTA").setValue("yes");
+                    if (new_note == false){
+                        new_note = true;
+                    }
+                    else if ((MainActivity.EMERGENCY_NOTIFICATION_ENABLE == 1) &&
+                            (new_note == true)){
+                        SendNotification(patient_name, false, value);
                     }
                 }
             }
@@ -329,17 +344,19 @@ public class ViewPatient extends AppCompatActivity {
         });
     }
 
-    private void SendNotification(String patient, boolean critical) {
+    private void SendNotification(String patient, boolean critical, String note) {
         String title = "Monitoddler - EMERGENCY!";
         String msg = "Patient " + patient.toUpperCase() + " is Critical";
         String msg_2 = "MoniToddler has detected an Emergency. \n" +
                 "Please go to the main app and check on patient " + patient;
 
         if (critical == false){
-            title = "Monitoddler - UPDATE!";
-            msg = "New Note for Patient " + patient.toUpperCase();
-            msg_2 = "A new Note has been posted. \n" +
-                    "Please go to the main app and check on patient " + patient;
+            title = "Patient " + patient.toUpperCase();
+            //msg = "New Note for Patient " + patient.toUpperCase();
+            msg = "New Note: " + note;
+            msg_2 = "A new Note has been posted. \n\n" +
+                    "Please go to the main app and check on patient " + patient + "\n\n\n" +
+                    "New Note: \n" + note;
         }
 
         NotificationCompat.Builder mBuilder =
@@ -347,6 +364,7 @@ public class ViewPatient extends AppCompatActivity {
                         .setSmallIcon(R.drawable.mt_icon_round)
                         .setContentTitle(title)
                         .setContentText(msg);
+        mBuilder.setColor(getResources().getColor(R.color.colorAccent));
 
         mBuilder.setDefaults(Notification.DEFAULT_SOUND);
         mBuilder.setVibrate(new long[] { 1000, 1000, 1000});
@@ -373,6 +391,8 @@ public class ViewPatient extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();//TODO
+        new_note = false;
+        new_critical = false;
         //fb_ref.goOffline();
         if (ref_listener!=null) fb_ref.removeEventListener(ref_listener);
 //        if ((MainActivity.EMERGENCY_NOTIFICATION_ENABLE == 0) &&

@@ -86,7 +86,7 @@ public class AsyncData extends AsyncTask<String, Void, String> {
                 + "\nAccDeltaZ: " + deltaPercent[5]);
         if (hrData != null) {
             HRText.setText("HR " + hrData.getHeartrate() + "\n AvgHR " + hrData.getAvgHeartrate()
-                    + "Breaths/min " + peakCounterMinute + " Breaths " + peakCounter);
+                    + "\nBreaths/min " + peakCounterMinute + " Breaths " + peakCounter);
         }
         else {
             HRText.setText("Breaths/min " + peakCounterMinute + " Breaths " + peakCounter);

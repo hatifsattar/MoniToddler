@@ -28,10 +28,9 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginBottom="3dp"
                 android:text="-"
                 android:textColor="@color/colorlistFontName"
-                android:textSize="30dp"
+                android:textSize="@dimen/font_view_patient_head"
                 android:textStyle="bold"
                 android:textAlignment="center" />
 
@@ -41,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:text="Patient Healthy"
                 android:textColor="@color/colorlistFontDesc"
-                android:textSize="20dp"
+                android:textSize="@dimen/font_view_patient_head"
                 android:textStyle="bold"
                 android:layout_below="@+id/textView"
                 android:layout_alignParentLeft="true"
@@ -69,7 +68,7 @@
                     android:layout_marginBottom="5dp"
                     android:text="Real-time Vitals"
                     android:textColor="@color/colorlistFontName"
-                    android:textSize="15dp" />
+                    android:textSize="@dimen/font_view_patient_descr" />
 
                 <TextView
                     android:id="@+id/textView2"
@@ -80,7 +79,7 @@
                     android:layout_alignStart="@+id/realtime_header"
                     android:text="X-Axis"
                     android:textColor="@color/colorlistFontDesc"
-                    android:textSize="17dp" />
+                    android:textSize="@dimen/font_view_patient" />
 
                 <TextView
                     android:id="@+id/x_axis"
@@ -91,7 +90,7 @@
                     android:layout_below="@+id/realtime_header"
                     android:text="-"
                     android:textColor="@color/colorlistFontDesc"
-                    android:textSize="17dp"
+                    android:textSize="@dimen/font_view_patient"
                     android:textStyle="bold" />
 
                 <TextView
@@ -103,7 +102,7 @@
                     android:layout_below="@+id/textView2"
                     android:text="Y-Axis"
                     android:textColor="@color/colorlistFontDesc"
-                    android:textSize="17dp" />
+                    android:textSize="@dimen/font_view_patient" />
 
                 <TextView
                     android:id="@+id/temp"
@@ -115,7 +114,7 @@
                     android:layout_alignTop="@+id/tv"
                     android:text="-"
                     android:textColor="@color/colorlistFontDesc"
-                    android:textSize="17dp"
+                    android:textSize="@dimen/font_view_patient"
                     android:textStyle="bold" />
 
                 <TextView
@@ -127,7 +126,7 @@
                     android:layout_below="@+id/tv"
                     android:text="Z-Axis"
                     android:textColor="@color/colorlistFontDesc"
-                    android:textSize="17dp" />
+                    android:textSize="@dimen/font_view_patient" />
 
                 <TextView
                     android:id="@+id/z_axis"
@@ -138,7 +137,7 @@
                     android:layout_alignTop="@+id/tv3"
                     android:text="-"
                     android:textColor="@color/colorlistFontDesc"
-                    android:textSize="17dp"
+                    android:textSize="@dimen/font_view_patient"
                     android:textStyle="bold" />
 
                 <TextView
@@ -151,7 +150,7 @@
                     android:layout_marginTop="7dp"
                     android:text="Heart Rate"
                     android:textColor="@color/colorlistFontDesc"
-                    android:textSize="17dp" />
+                    android:textSize="@dimen/font_view_patient" />
 
                 <TextView
                     android:id="@+id/heartrate"
@@ -162,7 +161,7 @@
                     android:layout_alignTop="@+id/tv5"
                     android:text="-"
                     android:textColor="@color/colorlistFontDesc"
-                    android:textSize="17dp"
+                    android:textSize="@dimen/font_view_patient"
                     android:textStyle="bold" />
 
                 <TextView
@@ -174,7 +173,7 @@
                     android:layout_below="@+id/tv3"
                     android:text="Respiratory Rate"
                     android:textColor="@color/colorlistFontDesc"
-                    android:textSize="17dp" />
+                    android:textSize="@dimen/font_view_patient" />
 
                 <TextView
                     android:id="@+id/resprate"
@@ -185,7 +184,7 @@
                     android:layout_alignTop="@+id/tv4"
                     android:text="-"
                     android:textColor="@color/colorlistFontDesc"
-                    android:textSize="17dp"
+                    android:textSize="@dimen/font_view_patient"
                     android:textStyle="bold" />
 
             </RelativeLayout>
@@ -209,7 +208,7 @@
                     android:layout_marginBottom="5dp"
                     android:text="Additional Vitals"
                     android:textColor="@color/colorlistFontName"
-                    android:textSize="15dp" />
+                    android:textSize="@dimen/font_view_patient_descr" />
 
                 <Button
                     android:id="@+id/buttonAddVitals"
@@ -231,7 +230,7 @@
                     android:layout_height="wrap_content"
                     android:text="Additional Vitals/Note:"
                     android:textColor="@color/colorlistFontName"
-                    android:textSize="17dp"
+                    android:textSize="@dimen/font_view_patient"
                     android:layout_below="@+id/lastUpdateTime"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true" />
@@ -242,7 +241,7 @@
                     android:layout_height="wrap_content"
                     android:text="Temperature"
                     android:textColor="@color/colorlistFontDesc"
-                    android:textSize="17dp"
+                    android:textSize="@dimen/font_view_patient"
                     android:layout_below="@+id/non_realtime_header"
                     android:layout_alignLeft="@+id/non_realtime_header"
                     android:layout_alignStart="@+id/non_realtime_header" />
@@ -253,7 +252,7 @@
                     android:layout_height="wrap_content"
                     android:text="-"
                     android:textColor="@color/colorlistFontDesc"
-                    android:textSize="17dp"
+                    android:textSize="@dimen/font_view_patient"
                     android:textStyle="bold"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
@@ -265,7 +264,7 @@
                     android:layout_height="wrap_content"
                     android:text="Blood Pressure"
                     android:textColor="@color/colorlistFontDesc"
-                    android:textSize="17dp"
+                    android:textSize="@dimen/font_view_patient"
                     android:layout_below="@+id/textView6"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true" />
@@ -276,7 +275,7 @@
                     android:layout_height="wrap_content"
                     android:text="-"
                     android:textColor="@color/colorlistFontDesc"
-                    android:textSize="17dp"
+                    android:textSize="@dimen/font_view_patient"
                     android:textStyle="bold"
                     android:layout_below="@+id/temperature"
                     android:layout_alignParentRight="true"
@@ -288,7 +287,7 @@
                     android:layout_height="wrap_content"
                     android:text="Saturation"
                     android:textColor="@color/colorlistFontDesc"
-                    android:textSize="17dp"
+                    android:textSize="@dimen/font_view_patient"
                     android:layout_below="@+id/textView8"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
@@ -300,7 +299,7 @@
                     android:layout_height="wrap_content"
                     android:text="-"
                     android:textColor="@color/colorlistFontDesc"
-                    android:textSize="17dp"
+                    android:textSize="@dimen/font_view_patient"
                     android:textStyle="bold"
                     android:layout_below="@+id/bloodpressure"
                     android:layout_alignParentRight="true"
@@ -312,7 +311,7 @@
                     android:layout_height="wrap_content"
                     android:text="Note: \nSample Note"
                     android:textColor="@color/colorlistFontVitals"
-                    android:textSize="17dp"
+                    android:textSize="@dimen/font_view_patient"
                     android:layout_below="@+id/textView10"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
@@ -328,7 +327,8 @@
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
                     android:layout_marginBottom="5dp"
-                    android:textStyle="italic" />
+                    android:textStyle="italic"
+                    android:textSize="@dimen/font_view_patient" />
             </RelativeLayout>
 
             <com.github.mikephil.charting.charts.LineChart
